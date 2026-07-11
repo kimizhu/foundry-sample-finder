@@ -41,6 +41,11 @@ Every choice shows a **sample count** — how many distinct samples sit beneath 
 before committing to a branch. **Expand all / Collapse all** reveal or hide the
 whole tree at once.
 
+The single most sensible **default** — *"I'm not sure — show me the best place to
+start"* — sits at the very top of the first question. Every question also flags
+its recommended option with a **★ Recommended** pill and a highlighted row
+(`"recommended": true` in `tree.json`), so there's always an obvious path forward.
+
 There's also a **Browse all samples** tab: full-text search plus
 framework / protocol / category / level filters over the whole catalog, for
 users who'd rather scan than be guided.

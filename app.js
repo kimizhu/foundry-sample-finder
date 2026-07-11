@@ -142,15 +142,19 @@ function renderOptions(questionNode, depth, pathKey) {
     const childNode = state.tree.nodes[opt.next];
     const isOpen = state.open.has(childKey);
     const isResult = childNode && childNode.type === "result";
+    const isRec = !!opt.recommended;
     const count = countFor(opt.next);
 
     const row = el(
       "button",
-      { class: "acc-row", "aria-expanded": String(isOpen), onclick: () => toggle(childKey) },
+      { class: "acc-row" + (isRec ? " recommended" : ""), "aria-expanded": String(isOpen), onclick: () => toggle(childKey) },
       [
         el("span", { class: "caret" + (isOpen ? " open" : ""), "aria-hidden": "true", text: "▸" }),
         el("span", { class: "acc-label" }, [
-          el("b", { text: opt.label }),
+          el("span", { class: "acc-title" }, [
+            el("b", { text: opt.label }),
+            isRec ? el("span", { class: "badge rec", text: "★ Recommended" }) : null,
+          ]),
           opt.description ? el("span", { class: "acc-desc", text: opt.description }) : null,
         ]),
         el("span", { class: "badge count" + (isResult ? " leaf" : ""), text: countLabel(count) }),

@@ -12,27 +12,28 @@ window.HA_TREE = {
       "type": "question",
       "breadcrumb": "Start",
       "title": "Where are you starting from?",
-      "help": "Level 1 — this picks the framework. It's the biggest fork and matches how the official docs are organized.",
+      "help": "New to Foundry hosted agents? Take the recommended Start here path. Already committed to a framework or have existing code? Jump straight to it.",
       "options": [
         {
-          "label": "I'm building a new agent",
-          "description": "Greenfield — or you're using AutoGen or Semantic Kernel (Agent Framework supports both natively). Tightest Foundry integration and the most samples.",
+          "label": "Start here — not sure which framework yet",
+          "description": "The recommended path. Get a short list of the best first agents (one per framework) and the quickest route to something running.",
+          "next": "notsure-result",
+          "recommended": true
+        },
+        {
+          "label": "Build a new agent on Microsoft Agent Framework",
+          "description": "Greenfield build — also the home for AutoGen and Semantic Kernel, which Agent Framework supports natively. The deepest, best-integrated set of samples.",
           "next": "af-interaction"
         },
         {
           "label": "I already have LangGraph / LangChain code",
-          "description": "Bring your existing LangGraph graphs to Foundry via langchain_azure_ai.agents.hosting.",
+          "description": "Host your existing LangGraph graphs on Foundry with minimal changes.",
           "next": "lg-interaction"
         },
         {
-          "label": "I have CrewAI, the OpenAI Agents SDK, the Claude Agent SDK, or my own stack",
-          "description": "Containerize and host an existing agent unchanged with the protocol SDKs (Bring Your Own).",
+          "label": "I already have an agent in another framework",
+          "description": "CrewAI, the OpenAI Agents SDK, the Claude Agent SDK, or a custom stack — containerize and host it unchanged (Bring Your Own).",
           "next": "byo-start"
-        },
-        {
-          "label": "I'm not sure — just show me the best place to start",
-          "description": "We'll point you at the canonical first agent.",
-          "next": "notsure-result"
         }
       ]
     },
@@ -40,7 +41,7 @@ window.HA_TREE = {
       "id": "notsure-result",
       "type": "result",
       "breadcrumb": "Recommended start",
-      "intro": "Start with the Agent Framework Basic agent — it has the tightest Foundry integration and the clearest learning path. If you'd rather stay minimal in your own code, the Bring Your Own hello-world is the smallest possible starting point; for existing LangGraph users, LangGraph Chat is the equivalent.",
+      "intro": "Not sure which framework yet? Start with the Agent Framework Basic agent — the tightest Foundry integration and the clearest learning path. Prefer to stay minimal in your own code? The Bring Your Own hello-world is the smallest possible start. Already on LangGraph? LangGraph Chat is the equivalent.",
       "sampleIds": [
         "af-resp-basic",
         "byo-resp-hello-world",
@@ -57,7 +58,8 @@ window.HA_TREE = {
         {
           "label": "A conversational chat or assistant",
           "description": "OpenAI-compatible clients; the platform manages history, streaming, and background execution (Responses protocol).",
-          "next": "af-capability"
+          "next": "af-capability",
+          "recommended": true
         },
         {
           "label": "A webhook, structured JSON, batch job, or custom streaming",
@@ -86,7 +88,8 @@ window.HA_TREE = {
         {
           "label": "Just the basics — chat and multi-turn conversation",
           "description": "Deploy your first agent and hold a conversation.",
-          "next": "af-basic-result"
+          "next": "af-basic-result",
+          "recommended": true
         },
         {
           "label": "Use tools / connect to external systems",
@@ -139,7 +142,8 @@ window.HA_TREE = {
         {
           "label": "Local Python functions I write",
           "description": "Register and invoke your own tool functions.",
-          "next": "af-tools-local-result"
+          "next": "af-tools-local-result",
+          "recommended": true
         },
         {
           "label": "A remote MCP server",
@@ -190,7 +194,8 @@ window.HA_TREE = {
         {
           "label": "RAG over an Azure AI Search index",
           "description": "Classic retrieval-augmented generation grounded in indexed documents.",
-          "next": "af-knowledge-rag-result"
+          "next": "af-knowledge-rag-result",
+          "recommended": true
         },
         {
           "label": "Agentic retrieval from a Foundry IQ knowledge base",
@@ -265,7 +270,8 @@ window.HA_TREE = {
         {
           "label": "Chain steps in code (sequential workflow)",
           "description": "Compose prompts/agents into a multi-step pipeline.",
-          "next": "af-orch-workflow-result"
+          "next": "af-orch-workflow-result",
+          "recommended": true
         },
         {
           "label": "Author the workflow declaratively in YAML",
@@ -307,7 +313,8 @@ window.HA_TREE = {
         {
           "label": "Observability — logging, metrics, tracing",
           "description": "Distributed traces and metrics to Application Insights.",
-          "next": "af-prod-observability-result"
+          "next": "af-prod-observability-result",
+          "recommended": true
         },
         {
           "label": "Call Azure services with managed identity (no keys)",
@@ -408,7 +415,8 @@ window.HA_TREE = {
         {
           "label": "A conversational chat or assistant",
           "description": "OpenAI-compatible Responses protocol with native session and streaming wiring.",
-          "next": "lg-capability"
+          "next": "lg-capability",
+          "recommended": true
         },
         {
           "label": "A webhook / structured JSON / custom sessions",
@@ -432,7 +440,8 @@ window.HA_TREE = {
         {
           "label": "Basic chat with local tools",
           "description": "Minimal graph with get_current_time and calculator tools.",
-          "next": "lg-chat-result"
+          "next": "lg-chat-result",
+          "recommended": true
         },
         {
           "label": "Use tools (Toolbox or MCP)",
@@ -480,7 +489,8 @@ window.HA_TREE = {
         {
           "label": "Foundry Toolbox (web_search + GitHub Copilot MCP)",
           "description": "Managed toolbox with OAuth consent surfacing.",
-          "next": "lg-tools-toolbox-result"
+          "next": "lg-tools-toolbox-result",
+          "recommended": true
         },
         {
           "label": "A remote MCP server directly",
@@ -571,7 +581,8 @@ window.HA_TREE = {
         {
           "label": "A conversational chat or assistant",
           "description": "OpenAI-compatible Responses protocol.",
-          "next": "byo-resp-capability"
+          "next": "byo-resp-capability",
+          "recommended": true
         },
         {
           "label": "A webhook, structured JSON, or custom streaming",
@@ -600,7 +611,8 @@ window.HA_TREE = {
         {
           "label": "The simplest hello-world",
           "description": "Call a Foundry model and return the reply.",
-          "next": "byo-resp-hello-result"
+          "next": "byo-resp-hello-result",
+          "recommended": true
         },
         {
           "label": "I have code in a specific framework",
@@ -658,7 +670,8 @@ window.HA_TREE = {
         {
           "label": "LangGraph",
           "description": "LangGraph conversational agent with multi-turn history.",
-          "next": "byo-resp-langgraph-result"
+          "next": "byo-resp-langgraph-result",
+          "recommended": true
         },
         {
           "label": "OpenAI Agents SDK",
@@ -742,7 +755,8 @@ window.HA_TREE = {
         {
           "label": "Resolve secrets from connections via env vars",
           "description": "Connection-templated secret resolver with a kind-aware safety policy.",
-          "next": "byo-resp-envvars-result"
+          "next": "byo-resp-envvars-result",
+          "recommended": true
         },
         {
           "label": "Optimize the agent (Agent Optimizer)",
@@ -780,7 +794,8 @@ window.HA_TREE = {
         {
           "label": "The simplest hello-world",
           "description": "JSON in, streaming SSE out.",
-          "next": "byo-inv-hello-result"
+          "next": "byo-inv-hello-result",
+          "recommended": true
         },
         {
           "label": "I have code in a framework (LangGraph, Claude Agent SDK)",
@@ -843,7 +858,8 @@ window.HA_TREE = {
         {
           "label": "LangGraph",
           "description": "LangGraph conversational agent with client-managed sessions.",
-          "next": "byo-inv-langgraph-result"
+          "next": "byo-inv-langgraph-result",
+          "recommended": true
         },
         {
           "label": "Claude Agent SDK",
@@ -943,7 +959,8 @@ window.HA_TREE = {
         {
           "label": "Minimal hello-world (Invocations)",
           "description": "The smallest Voice Live-compatible Invocations agent.",
-          "next": "byo-vl-hello-result"
+          "next": "byo-vl-hello-result",
+          "recommended": true
         },
         {
           "label": "A task-oriented voice agent (hotel booking)",
@@ -1022,7 +1039,8 @@ window.HA_TREE = {
         {
           "label": "Minimal Voice Live over WebSocket",
           "description": "~250-line agent bridging a browser socket to a Voice Live session.",
-          "next": "byo-ws-hello-result"
+          "next": "byo-ws-hello-result",
+          "recommended": true
         },
         {
           "label": "Pipecat over WebSocket (audio on the socket)",

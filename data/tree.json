@@ -40,11 +40,11 @@
       "id": "notsure-result",
       "type": "result",
       "breadcrumb": "Recommended start",
-      "intro": "Not sure which framework yet? Start with the Agent Framework Basic agent — the tightest Foundry integration and the clearest learning path. Prefer to stay minimal in your own code? The Bring Your Own hello-world is the smallest possible start. Already on LangGraph? LangGraph Chat is the equivalent.",
+      "intro": "Not sure which framework yet? Start with the Agent Framework Basic agent — the tightest Foundry integration and the clearest learning path. Already on LangGraph? LangGraph Chat is the equivalent. Prefer to stay minimal in your own code? The Bring Your Own hello-world is the smallest possible start.",
       "sampleIds": [
         "af-resp-basic",
-        "byo-resp-hello-world",
-        "lg-resp-chat"
+        "lg-resp-chat",
+        "byo-resp-hello-world"
       ]
     },
     "af-interaction": {

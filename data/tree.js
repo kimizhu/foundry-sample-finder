@@ -12,17 +12,17 @@ window.HA_TREE = {
       "type": "question",
       "breadcrumb": "Start",
       "title": "Where are you starting from?",
-      "help": "New to Foundry hosted agents? Take the recommended Start here path. Already committed to a framework or have existing code? Jump straight to it.",
+      "help": "New here? Start with the recommended option. Already committed to a framework or have existing code? Jump straight to it.",
       "options": [
         {
-          "label": "Start here — not sure which framework yet",
-          "description": "The recommended path. Get a short list of the best first agents (one per framework) and the quickest route to something running.",
+          "label": "I'm just getting started",
+          "description": "New to Foundry hosted agents. Begin with the recommended first agents — one per framework — for the quickest path to something running.",
           "next": "notsure-result",
           "recommended": true
         },
         {
-          "label": "Build a new agent on Microsoft Agent Framework",
-          "description": "Greenfield build — also the home for AutoGen and Semantic Kernel, which Agent Framework supports natively. The deepest, best-integrated set of samples.",
+          "label": "I'm building a new agent from scratch",
+          "description": "A greenfield build on Microsoft Agent Framework — also the home for AutoGen and Semantic Kernel. The deepest, best-integrated set of samples.",
           "next": "af-interaction"
         },
         {
@@ -32,7 +32,7 @@ window.HA_TREE = {
         },
         {
           "label": "I already have an agent in another framework",
-          "description": "CrewAI, the OpenAI Agents SDK, the Claude Agent SDK, or a custom stack — containerize and host it unchanged (Bring Your Own).",
+          "description": "CrewAI, the OpenAI Agents SDK, the Claude Agent SDK, or a custom stack — host it unchanged (Bring Your Own).",
           "next": "byo-start"
         }
       ]

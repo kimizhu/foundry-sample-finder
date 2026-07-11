@@ -129,26 +129,20 @@ main.wrap { padding-top: 26px; padding-bottom: 40px; min-height: 50vh; }
 .acc-row:hover { background: var(--surface-2); }
 .acc-row[aria-expanded="true"] { background: var(--accent-soft); }
 
-/* recommended choice — strong indicator */
-.acc-row.recommended {
-  border-left: 3px solid var(--accent);
-  background: var(--accent-soft);
-}
-.acc-row.recommended:hover { background: #daeafb; }
-.acc-item:has(> .acc-row.recommended) { border-color: var(--accent); }
-
+/* recommended choice — a soft pill only, no row highlight */
 .acc-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .badge.rec {
-  background: var(--accent);
-  color: #fff;
-  border: none;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  border: 1px solid #cfe2f6;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.02em;
   padding: 2px 9px;
   border-radius: 999px;
   white-space: nowrap;
 }
+.badge.rec .star { color: #7fa6d6; margin-right: 1px; }
 
 .caret {
   color: var(--accent);

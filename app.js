@@ -147,13 +147,18 @@ function renderOptions(questionNode, depth, pathKey) {
 
     const row = el(
       "button",
-      { class: "acc-row" + (isRec ? " recommended" : ""), "aria-expanded": String(isOpen), onclick: () => toggle(childKey) },
+      { class: "acc-row", "aria-expanded": String(isOpen), onclick: () => toggle(childKey) },
       [
         el("span", { class: "caret" + (isOpen ? " open" : ""), "aria-hidden": "true", text: "▸" }),
         el("span", { class: "acc-label" }, [
           el("span", { class: "acc-title" }, [
             el("b", { text: opt.label }),
-            isRec ? el("span", { class: "badge rec", text: "★ Recommended" }) : null,
+            isRec
+              ? el("span", { class: "badge rec" }, [
+                  el("span", { class: "star", "aria-hidden": "true", text: "★" }),
+                  " Recommended",
+                ])
+              : null,
           ]),
           opt.description ? el("span", { class: "acc-desc", text: opt.description }) : null,
         ]),

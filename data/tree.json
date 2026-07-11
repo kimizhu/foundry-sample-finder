@@ -1,0 +1,973 @@
+{
+  "meta": {
+    "version": "1.0",
+    "rootId": "start",
+    "title": "Foundry Hosted-Agent Sample Finder",
+    "description": "A guided decision tree that turns the flat list of hosted-agent samples into a few answerable questions. Level 1 = where you're starting from (framework), Level 2 = how clients interact (protocol/channel), Level 3 = the capability you're adding."
+  },
+  "nodes": {
+    "start": {
+      "id": "start",
+      "type": "question",
+      "breadcrumb": "Start",
+      "title": "Where are you starting from?",
+      "help": "Level 1 — this picks the framework. It's the biggest fork and matches how the official docs are organized.",
+      "options": [
+        {
+          "label": "I'm building a new agent",
+          "description": "Greenfield — or you're using AutoGen or Semantic Kernel (Agent Framework supports both natively). Tightest Foundry integration and the most samples.",
+          "next": "af-interaction"
+        },
+        {
+          "label": "I already have LangGraph / LangChain code",
+          "description": "Bring your existing LangGraph graphs to Foundry via langchain_azure_ai.agents.hosting.",
+          "next": "lg-interaction"
+        },
+        {
+          "label": "I have CrewAI, the OpenAI Agents SDK, the Claude Agent SDK, or my own stack",
+          "description": "Containerize and host an existing agent unchanged with the protocol SDKs (Bring Your Own).",
+          "next": "byo-start"
+        },
+        {
+          "label": "I'm not sure — just show me the best place to start",
+          "description": "We'll point you at the canonical first agent.",
+          "next": "notsure-result"
+        }
+      ]
+    },
+    "notsure-result": {
+      "id": "notsure-result",
+      "type": "result",
+      "breadcrumb": "Recommended start",
+      "intro": "Start with the Agent Framework Basic agent — it has the tightest Foundry integration and the clearest learning path. If you'd rather stay minimal in your own code, the Bring Your Own hello-world is the smallest possible starting point; for existing LangGraph users, LangGraph Chat is the equivalent.",
+      "sampleIds": ["af-resp-basic", "byo-resp-hello-world", "lg-resp-chat"]
+    },
+
+    "af-interaction": {
+      "id": "af-interaction",
+      "type": "question",
+      "breadcrumb": "Agent Framework",
+      "title": "How will people or systems interact with your agent?",
+      "help": "Level 2 — this picks the protocol/channel. Start with Responses if you're unsure; you can add other endpoints later.",
+      "options": [
+        {
+          "label": "A conversational chat or assistant",
+          "description": "OpenAI-compatible clients; the platform manages history, streaming, and background execution (Responses protocol).",
+          "next": "af-capability"
+        },
+        {
+          "label": "A webhook, structured JSON, batch job, or custom streaming",
+          "description": "You define the payload schema and manage sessions yourself (Invocations protocol).",
+          "next": "af-inv-result"
+        },
+        {
+          "label": "Publish to Microsoft Teams / Microsoft 365",
+          "description": "Responses logic plus the Activity protocol for the Teams channel.",
+          "next": "af-teams-result"
+        },
+        {
+          "label": "Delegate to, or be called by, other agents",
+          "description": "Agent-to-agent delegation over the A2A protocol.",
+          "next": "af-a2a-result"
+        }
+      ]
+    },
+    "af-capability": {
+      "id": "af-capability",
+      "type": "question",
+      "breadcrumb": "Chat (Responses)",
+      "title": "What do you want your agent to do?",
+      "help": "Level 3 — the capability you're adding on top of a conversational agent.",
+      "options": [
+        {
+          "label": "Just the basics — chat and multi-turn conversation",
+          "description": "Deploy your first agent and hold a conversation.",
+          "next": "af-basic-result"
+        },
+        {
+          "label": "Use tools / connect to external systems",
+          "description": "Local functions, remote MCP servers, or a Foundry Toolbox.",
+          "next": "af-tools"
+        },
+        {
+          "label": "Ground answers in my knowledge (RAG, memory, skills)",
+          "description": "Azure AI Search, Foundry IQ, persistent memory, or packaged skills.",
+          "next": "af-knowledge"
+        },
+        {
+          "label": "Work with uploaded files",
+          "description": "Manipulate and reason over files uploaded to the session.",
+          "next": "af-files-result"
+        },
+        {
+          "label": "Coordinate multiple agents or steps",
+          "description": "Sequential workflows, declarative YAML workflows, or A2A delegation.",
+          "next": "af-orchestration"
+        },
+        {
+          "label": "Harden it for production",
+          "description": "Observability, managed-identity access, content safety, or optimization.",
+          "next": "af-production"
+        },
+        {
+          "label": "Automate a browser",
+          "description": "Browse, scrape, and fill forms with the Browser Automation tool.",
+          "next": "af-browser-result"
+        }
+      ]
+    },
+    "af-basic-result": {
+      "id": "af-basic-result",
+      "type": "result",
+      "breadcrumb": "Basics",
+      "intro": "The Basic agent is your starting point — request/response plus multi-turn conversations via previous_response_id.",
+      "sampleIds": ["af-resp-basic"]
+    },
+    "af-tools": {
+      "id": "af-tools",
+      "type": "question",
+      "breadcrumb": "Tools",
+      "title": "What kind of tools?",
+      "help": "All three plug tools into a Responses agent — they differ in where the tools live.",
+      "options": [
+        {
+          "label": "Local Python functions I write",
+          "description": "Register and invoke your own tool functions.",
+          "next": "af-tools-local-result"
+        },
+        {
+          "label": "A remote MCP server",
+          "description": "Consume tools from an external MCP provider (e.g. GitHub).",
+          "next": "af-tools-mcp-result"
+        },
+        {
+          "label": "A managed Foundry Toolbox",
+          "description": "Provision a toolbox and discover tools at runtime.",
+          "next": "af-tools-toolbox-result"
+        }
+      ]
+    },
+    "af-tools-local-result": {
+      "id": "af-tools-local-result",
+      "type": "result",
+      "breadcrumb": "Local tools",
+      "intro": "Register custom local tool functions alongside the LLM.",
+      "sampleIds": ["af-resp-tools"]
+    },
+    "af-tools-mcp-result": {
+      "id": "af-tools-mcp-result",
+      "type": "result",
+      "breadcrumb": "MCP",
+      "intro": "Connect to a remote MCP server to consume external tools and retrieval.",
+      "sampleIds": ["af-resp-mcp"]
+    },
+    "af-tools-toolbox-result": {
+      "id": "af-tools-toolbox-result",
+      "type": "result",
+      "breadcrumb": "Toolbox",
+      "intro": "Use a managed Foundry Toolbox for tool access.",
+      "sampleIds": ["af-resp-foundry-toolbox"]
+    },
+    "af-knowledge": {
+      "id": "af-knowledge",
+      "type": "question",
+      "breadcrumb": "Knowledge",
+      "title": "How do you want to bring in knowledge?",
+      "help": "Ground the agent in your own data or give it memory.",
+      "options": [
+        {
+          "label": "RAG over an Azure AI Search index",
+          "description": "Classic retrieval-augmented generation grounded in indexed documents.",
+          "next": "af-knowledge-rag-result"
+        },
+        {
+          "label": "Agentic retrieval from a Foundry IQ knowledge base",
+          "description": "A Foundry IQ knowledge base reached over a Foundry Toolbox MCP endpoint, keyless.",
+          "next": "af-knowledge-iq-result"
+        },
+        {
+          "label": "Persistent memory of user facts across sessions",
+          "description": "Remember users between conversations with a Foundry Memory Store.",
+          "next": "af-knowledge-memory-result"
+        },
+        {
+          "label": "Packaged, file-based skills",
+          "description": "Decouple tone/policy/procedures from code as reusable skills.",
+          "next": "af-skills-result"
+        }
+      ]
+    },
+    "af-knowledge-rag-result": {
+      "id": "af-knowledge-rag-result",
+      "type": "result",
+      "breadcrumb": "Azure AI Search RAG",
+      "intro": "Ground answers in documents indexed in Azure AI Search.",
+      "sampleIds": ["af-resp-azure-search-rag"]
+    },
+    "af-knowledge-iq-result": {
+      "id": "af-knowledge-iq-result",
+      "type": "result",
+      "breadcrumb": "Foundry IQ",
+      "intro": "Answer from a Foundry IQ knowledge base (Azure AI Search agentic retrieval) via a toolbox MCP endpoint.",
+      "sampleIds": ["af-resp-foundry-iq-toolbox"]
+    },
+    "af-knowledge-memory-result": {
+      "id": "af-knowledge-memory-result",
+      "type": "result",
+      "breadcrumb": "Memory",
+      "intro": "Persist semantic memory of user facts across sessions.",
+      "sampleIds": ["af-resp-foundry-memory"]
+    },
+    "af-skills-result": {
+      "id": "af-skills-result",
+      "type": "result",
+      "breadcrumb": "Skills",
+      "intro": "Two ways to package skills: native file-based skills bundled with the agent, or Foundry Skills managed via the REST API and downloaded at startup.",
+      "sampleIds": ["af-resp-skills", "af-resp-foundry-skills"]
+    },
+    "af-files-result": {
+      "id": "af-files-result",
+      "type": "result",
+      "breadcrumb": "Files",
+      "intro": "Handle files uploaded to the session and reason over their contents.",
+      "sampleIds": ["af-resp-files"]
+    },
+    "af-orchestration": {
+      "id": "af-orchestration",
+      "type": "question",
+      "breadcrumb": "Orchestration",
+      "title": "How do you want to coordinate work?",
+      "help": "From in-code pipelines to declarative workflows to cross-agent delegation.",
+      "options": [
+        {
+          "label": "Chain steps in code (sequential workflow)",
+          "description": "Compose prompts/agents into a multi-step pipeline.",
+          "next": "af-orch-workflow-result"
+        },
+        {
+          "label": "Author the workflow declaratively in YAML",
+          "description": "A customer-support triage workflow defined entirely in YAML.",
+          "next": "af-orch-declarative-result"
+        },
+        {
+          "label": "Delegate to another agent over A2A",
+          "description": "A caller agent delegates to an executor exposed as an A2A endpoint.",
+          "next": "af-a2a-result"
+        }
+      ]
+    },
+    "af-orch-workflow-result": {
+      "id": "af-orch-workflow-result",
+      "type": "result",
+      "breadcrumb": "Workflows",
+      "intro": "Chain prompts/agents into a sequential orchestrated pipeline.",
+      "sampleIds": ["af-resp-workflows"]
+    },
+    "af-orch-declarative-result": {
+      "id": "af-orch-declarative-result",
+      "type": "result",
+      "breadcrumb": "Declarative",
+      "intro": "A multi-turn triage workflow authored in YAML that invokes specialist Foundry agents.",
+      "sampleIds": ["af-resp-declarative"]
+    },
+    "af-production": {
+      "id": "af-production",
+      "type": "question",
+      "breadcrumb": "Production",
+      "title": "Which production concern?",
+      "help": "Operational hardening and governance for a real deployment.",
+      "options": [
+        {
+          "label": "Observability — logging, metrics, tracing",
+          "description": "Distributed traces and metrics to Application Insights.",
+          "next": "af-prod-observability-result"
+        },
+        {
+          "label": "Call Azure services with managed identity (no keys)",
+          "description": "Blob Storage and Service Bus via per-agent Entra identity + RBAC.",
+          "next": "af-prod-downstream-result"
+        },
+        {
+          "label": "Add a content-safety guardrail",
+          "description": "Screen prompts and responses against a Responsible AI policy.",
+          "next": "af-prod-safety-result"
+        },
+        {
+          "label": "Optimize the agent's instructions and tools",
+          "description": "Wire the agent for the Foundry Agent Optimizer (preview).",
+          "next": "af-prod-optimize-result"
+        }
+      ]
+    },
+    "af-prod-observability-result": {
+      "id": "af-prod-observability-result",
+      "type": "result",
+      "breadcrumb": "Observability",
+      "intro": "Add logging, metrics, and distributed tracing to Application Insights.",
+      "sampleIds": ["af-resp-observability"]
+    },
+    "af-prod-downstream-result": {
+      "id": "af-prod-downstream-result",
+      "type": "result",
+      "breadcrumb": "Managed identity",
+      "intro": "Access Azure Blob Storage and Service Bus with the agent's per-agent identity — no connection strings.",
+      "sampleIds": ["af-resp-downstream-azure"]
+    },
+    "af-prod-safety-result": {
+      "id": "af-prod-safety-result",
+      "type": "result",
+      "breadcrumb": "Content safety",
+      "intro": "Attach a content-safety guardrail so the platform screens inputs and outputs.",
+      "sampleIds": ["af-resp-content-safety"]
+    },
+    "af-prod-optimize-result": {
+      "id": "af-prod-optimize-result",
+      "type": "result",
+      "breadcrumb": "Optimizer",
+      "intro": "A travel-approval agent wired for the Foundry Agent Optimizer (instructions, skills, tool descriptions).",
+      "sampleIds": ["af-resp-optimization-travel"]
+    },
+    "af-browser-result": {
+      "id": "af-browser-result",
+      "type": "result",
+      "breadcrumb": "Browser automation",
+      "intro": "Automate a real browser (browse, scrape, fill forms) via Foundry Toolbox + Azure Playwright Service.",
+      "sampleIds": ["af-resp-browser-automation"]
+    },
+    "af-inv-result": {
+      "id": "af-inv-result",
+      "type": "result",
+      "breadcrumb": "Invocations",
+      "intro": "Use the Invocations protocol for full HTTP control. Learn the handler/session pattern here, then port any Responses capability (tools, RAG, memory) — only the HTTP handler differs.",
+      "sampleIds": ["af-inv-basic"]
+    },
+    "af-teams-result": {
+      "id": "af-teams-result",
+      "type": "result",
+      "breadcrumb": "Teams / M365",
+      "intro": "Publish the agent to Teams / M365 and answer Teams & calendar questions with Work IQ tools.",
+      "sampleIds": ["af-resp-teams-activity"]
+    },
+    "af-a2a-result": {
+      "id": "af-a2a-result",
+      "type": "result",
+      "breadcrumb": "A2A",
+      "intro": "A caller agent delegates over A2A to an executor exposed as an incoming A2A endpoint.",
+      "sampleIds": ["af-a2a-delegation"]
+    },
+
+    "lg-interaction": {
+      "id": "lg-interaction",
+      "type": "question",
+      "breadcrumb": "LangGraph",
+      "title": "How will clients interact with your LangGraph agent?",
+      "help": "Level 2 — protocol/channel for your existing LangGraph graph.",
+      "options": [
+        {
+          "label": "A conversational chat or assistant",
+          "description": "OpenAI-compatible Responses protocol with native session and streaming wiring.",
+          "next": "lg-capability"
+        },
+        {
+          "label": "A webhook / structured JSON / custom sessions",
+          "description": "Invocations protocol with client-managed session state via a checkpointer.",
+          "next": "lg-inv-result"
+        },
+        {
+          "label": "Delegate to, or be called by, other agents",
+          "description": "A2A delegation between two LangGraph agents.",
+          "next": "lg-a2a-result"
+        }
+      ]
+    },
+    "lg-capability": {
+      "id": "lg-capability",
+      "type": "question",
+      "breadcrumb": "Chat (Responses)",
+      "title": "What do you want it to do?",
+      "help": "Level 3 — the capability on top of a LangGraph Responses agent.",
+      "options": [
+        {
+          "label": "Basic chat with local tools",
+          "description": "Minimal graph with get_current_time and calculator tools.",
+          "next": "lg-chat-result"
+        },
+        {
+          "label": "Use tools (Toolbox or MCP)",
+          "description": "Foundry Toolbox (web_search + GitHub Copilot MCP) or a raw remote MCP server.",
+          "next": "lg-tools"
+        },
+        {
+          "label": "Work with uploaded files",
+          "description": "Local filesystem tools plus a Toolbox code_interpreter.",
+          "next": "lg-files-result"
+        },
+        {
+          "label": "Chain multiple LLM nodes (StateGraph workflow)",
+          "description": "A custom StateGraph pipeline of specialized nodes.",
+          "next": "lg-workflows-result"
+        },
+        {
+          "label": "Pause for human approval (human-in-the-loop)",
+          "description": "Draft, then interrupt for approval before continuing.",
+          "next": "lg-hitl-result"
+        },
+        {
+          "label": "Add observability / tracing",
+          "description": "GenAI OpenTelemetry tracing to Application Insights.",
+          "next": "lg-observability-result"
+        }
+      ]
+    },
+    "lg-chat-result": {
+      "id": "lg-chat-result",
+      "type": "result",
+      "breadcrumb": "Chat",
+      "intro": "A minimal LangGraph agent with two local tools and multi-turn conversation.",
+      "sampleIds": ["lg-resp-chat"]
+    },
+    "lg-tools": {
+      "id": "lg-tools",
+      "type": "question",
+      "breadcrumb": "Tools",
+      "title": "Foundry Toolbox or a raw MCP server?",
+      "help": "Both surface external tools to a LangGraph agent.",
+      "options": [
+        {
+          "label": "Foundry Toolbox (web_search + GitHub Copilot MCP)",
+          "description": "Managed toolbox with OAuth consent surfacing.",
+          "next": "lg-tools-toolbox-result"
+        },
+        {
+          "label": "A remote MCP server directly",
+          "description": "Load tools from an MCP server via langchain_mcp_adapters.",
+          "next": "lg-tools-mcp-result"
+        }
+      ]
+    },
+    "lg-tools-toolbox-result": {
+      "id": "lg-tools-toolbox-result",
+      "type": "result",
+      "breadcrumb": "Toolbox",
+      "intro": "A LangGraph agent wired to a Foundry Toolbox exposing web_search + a GitHub Copilot MCP tool.",
+      "sampleIds": ["lg-resp-toolbox"]
+    },
+    "lg-tools-mcp-result": {
+      "id": "lg-tools-mcp-result",
+      "type": "result",
+      "breadcrumb": "MCP",
+      "intro": "A LangGraph agent that loads tools from a remote MCP server (default: GitHub Copilot MCP).",
+      "sampleIds": ["lg-resp-mcp"]
+    },
+    "lg-files-result": {
+      "id": "lg-files-result",
+      "type": "result",
+      "breadcrumb": "Files",
+      "intro": "A LangGraph agent with filesystem tools and a Toolbox code_interpreter for uploaded files.",
+      "sampleIds": ["lg-resp-files"]
+    },
+    "lg-workflows-result": {
+      "id": "lg-workflows-result",
+      "type": "result",
+      "breadcrumb": "Workflows",
+      "intro": "A custom StateGraph chaining slogan-writer, legal-reviewer, and formatter nodes.",
+      "sampleIds": ["lg-resp-workflows"]
+    },
+    "lg-hitl-result": {
+      "id": "lg-hitl-result",
+      "type": "result",
+      "breadcrumb": "Human-in-the-loop",
+      "intro": "A StateGraph that drafts a proposal and pauses for approval via interrupt.",
+      "sampleIds": ["lg-resp-hitl"]
+    },
+    "lg-observability-result": {
+      "id": "lg-observability-result",
+      "type": "result",
+      "breadcrumb": "Observability",
+      "intro": "GenAI OpenTelemetry tracing with spans, metrics, and logs to Application Insights.",
+      "sampleIds": ["lg-resp-observability"]
+    },
+    "lg-inv-result": {
+      "id": "lg-inv-result",
+      "type": "result",
+      "breadcrumb": "Invocations",
+      "intro": "A minimal LangGraph agent over Invocations with session state backed by a checkpointer.",
+      "sampleIds": ["lg-inv-chat"]
+    },
+    "lg-a2a-result": {
+      "id": "lg-a2a-result",
+      "type": "result",
+      "breadcrumb": "A2A",
+      "intro": "A concierge LangGraph agent delegates math questions over A2A to a math-expert agent.",
+      "sampleIds": ["lg-a2a-delegation"]
+    },
+
+    "byo-start": {
+      "id": "byo-start",
+      "type": "question",
+      "breadcrumb": "Bring Your Own",
+      "title": "How will your agent interact with the world?",
+      "help": "Level 2 — this maps to the protocol your BYO agent speaks.",
+      "options": [
+        {
+          "label": "A conversational chat or assistant",
+          "description": "OpenAI-compatible Responses protocol.",
+          "next": "byo-resp-capability"
+        },
+        {
+          "label": "A webhook, structured JSON, or custom streaming",
+          "description": "Arbitrary JSON in / SSE out over the Invocations protocol.",
+          "next": "byo-inv-capability"
+        },
+        {
+          "label": "Real-time voice via Azure Voice Live",
+          "description": "Attach a managed voice layer (STT+LLM+TTS) to a Responses or Invocations agent.",
+          "next": "byo-voice"
+        },
+        {
+          "label": "Real-time streaming audio over WebSocket / WebRTC",
+          "description": "You own the audio transport — Pipecat, LiveKit, or raw Voice Live over a socket.",
+          "next": "byo-ws"
+        }
+      ]
+    },
+    "byo-resp-capability": {
+      "id": "byo-resp-capability",
+      "type": "question",
+      "breadcrumb": "Chat (Responses)",
+      "title": "What's the closest starting point?",
+      "help": "Level 3 — pick the framework you already use, or the scenario nearest to yours.",
+      "options": [
+        {
+          "label": "The simplest hello-world",
+          "description": "Call a Foundry model and return the reply.",
+          "next": "byo-resp-hello-result"
+        },
+        {
+          "label": "I have code in a specific framework",
+          "description": "LangGraph or the OpenAI Agents SDK.",
+          "next": "byo-resp-adapters"
+        },
+        {
+          "label": "Connect to tools via a Foundry Toolbox",
+          "description": "Plain toolbox, or LangGraph + toolbox (incl. on-behalf-of user identity).",
+          "next": "byo-resp-tools-result"
+        },
+        {
+          "label": "Take notes / maintain state with a custom tool",
+          "description": "A note-taking agent.",
+          "next": "byo-resp-notetaking-result"
+        },
+        {
+          "label": "Long-running background processing",
+          "description": "Async background execution.",
+          "next": "byo-resp-background-result"
+        },
+        {
+          "label": "Manage sessions across multiple callers",
+          "description": "Share one session id while history stays scoped per user.",
+          "next": "byo-resp-session-result"
+        },
+        {
+          "label": "Automate a browser",
+          "description": "Toolbox MCP + playwright-cli for multi-session browsing.",
+          "next": "byo-resp-browser-result"
+        },
+        {
+          "label": "Production concerns (secrets, optimization)",
+          "description": "Connection-templated secrets, or wiring for the Agent Optimizer.",
+          "next": "byo-resp-production"
+        }
+      ]
+    },
+    "byo-resp-hello-result": {
+      "id": "byo-resp-hello-result",
+      "type": "result",
+      "breadcrumb": "Hello world",
+      "intro": "The simplest possible BYO Responses agent.",
+      "sampleIds": ["byo-resp-hello-world"]
+    },
+    "byo-resp-adapters": {
+      "id": "byo-resp-adapters",
+      "type": "question",
+      "breadcrumb": "Framework",
+      "title": "Which framework or SDK?",
+      "help": "Host your existing agent unchanged over Responses.",
+      "options": [
+        {
+          "label": "LangGraph",
+          "description": "LangGraph conversational agent with multi-turn history.",
+          "next": "byo-resp-langgraph-result"
+        },
+        {
+          "label": "OpenAI Agents SDK",
+          "description": "An agent built with the OpenAI Agents SDK.",
+          "next": "byo-resp-openai-result"
+        }
+      ]
+    },
+    "byo-resp-langgraph-result": {
+      "id": "byo-resp-langgraph-result",
+      "type": "result",
+      "breadcrumb": "LangGraph",
+      "intro": "A LangGraph conversational agent hosted over the Responses protocol.",
+      "sampleIds": ["byo-resp-langgraph-chat"]
+    },
+    "byo-resp-openai-result": {
+      "id": "byo-resp-openai-result",
+      "type": "result",
+      "breadcrumb": "OpenAI Agents SDK",
+      "intro": "Host an OpenAI Agents SDK agent over the Responses protocol.",
+      "sampleIds": ["byo-resp-openai-agents-sdk"]
+    },
+    "byo-resp-tools-result": {
+      "id": "byo-resp-tools-result",
+      "type": "result",
+      "breadcrumb": "Toolbox",
+      "intro": "Wire a BYO agent to a Foundry Toolbox. The plain toolbox sample is the baseline; the LangGraph variants add a graph, and the user-identity variant accesses tools on behalf of the signed-in user.",
+      "sampleIds": ["byo-resp-toolbox", "byo-resp-langgraph-toolbox", "byo-resp-langgraph-toolbox-user-identity"]
+    },
+    "byo-resp-notetaking-result": {
+      "id": "byo-resp-notetaking-result",
+      "type": "result",
+      "breadcrumb": "Notetaking",
+      "intro": "An agent that takes and retrieves notes with a custom tool.",
+      "sampleIds": ["byo-resp-notetaking"]
+    },
+    "byo-resp-background-result": {
+      "id": "byo-resp-background-result",
+      "type": "result",
+      "breadcrumb": "Background",
+      "intro": "Long-running background processing with async execution.",
+      "sampleIds": ["byo-resp-background"]
+    },
+    "byo-resp-session-result": {
+      "id": "byo-resp-session-result",
+      "type": "result",
+      "breadcrumb": "Sessions",
+      "intro": "Multiple callers share one agent_session_id while history stays scoped per platform user.",
+      "sampleIds": ["byo-resp-session-multiplexing"]
+    },
+    "byo-resp-browser-result": {
+      "id": "byo-resp-browser-result",
+      "type": "result",
+      "breadcrumb": "Browser automation",
+      "intro": "Browser automation with Toolbox MCP session lifecycle and playwright-cli.",
+      "sampleIds": ["byo-resp-browser-automation"]
+    },
+    "byo-resp-production": {
+      "id": "byo-resp-production",
+      "type": "question",
+      "breadcrumb": "Production",
+      "title": "Which production concern?",
+      "help": "Secrets handling or agent optimization.",
+      "options": [
+        {
+          "label": "Resolve secrets from connections via env vars",
+          "description": "Connection-templated secret resolver with a kind-aware safety policy.",
+          "next": "byo-resp-envvars-result"
+        },
+        {
+          "label": "Optimize the agent (Agent Optimizer)",
+          "description": "Minimal or customer-support agent wired for the optimizer.",
+          "next": "byo-resp-optimization-result"
+        }
+      ]
+    },
+    "byo-resp-envvars-result": {
+      "id": "byo-resp-envvars-result",
+      "type": "result",
+      "breadcrumb": "Env vars",
+      "intro": "Read env vars injected by Foundry's connection-templated secret resolver.",
+      "sampleIds": ["byo-resp-env-vars"]
+    },
+    "byo-resp-optimization-result": {
+      "id": "byo-resp-optimization-result",
+      "type": "result",
+      "breadcrumb": "Optimizer",
+      "intro": "BYO agents wired for the Foundry Agent Optimizer — start with hello-world, then the customer-support scenario.",
+      "sampleIds": ["byo-resp-optimization-hello-world", "byo-resp-optimization-customer-support"]
+    },
+    "byo-inv-capability": {
+      "id": "byo-inv-capability",
+      "type": "question",
+      "breadcrumb": "Invocations",
+      "title": "What's your Invocations scenario?",
+      "help": "Level 3 — arbitrary JSON in / SSE out; you own the payload and sessions.",
+      "options": [
+        {
+          "label": "The simplest hello-world",
+          "description": "JSON in, streaming SSE out.",
+          "next": "byo-inv-hello-result"
+        },
+        {
+          "label": "I have code in a framework (LangGraph, Claude Agent SDK)",
+          "description": "Host an existing framework agent over Invocations.",
+          "next": "byo-inv-adapters"
+        },
+        {
+          "label": "Connect to tools via a Foundry Toolbox",
+          "description": "Toolbox MCP endpoint over Invocations.",
+          "next": "byo-inv-toolbox-result"
+        },
+        {
+          "label": "Take notes / maintain state",
+          "description": "A note-taking agent over Invocations.",
+          "next": "byo-inv-notetaking-result"
+        },
+        {
+          "label": "A custom UI streaming protocol (AG-UI)",
+          "description": "AG-UI streaming via the Invocations endpoint.",
+          "next": "byo-inv-agui-result"
+        },
+        {
+          "label": "Bridge to GitHub Copilot",
+          "description": "Use GitHub Copilot as the AI backbone.",
+          "next": "byo-inv-copilot-result"
+        },
+        {
+          "label": "Pause for human approval (human-in-the-loop)",
+          "description": "Long-running agent that waits for approval.",
+          "next": "byo-inv-hitl-result"
+        },
+        {
+          "label": "Trigger from an event (Azure Event Grid)",
+          "description": "Storage → Event Grid → agent, summarizing new blobs.",
+          "next": "byo-inv-eventgrid-result"
+        },
+        {
+          "label": "Diagnose networking / infra (no LLM)",
+          "description": "DNS/TCP/TLS/HTTP probes for BYO network debugging.",
+          "next": "byo-inv-diagnostic-result"
+        }
+      ]
+    },
+    "byo-inv-hello-result": {
+      "id": "byo-inv-hello-result",
+      "type": "result",
+      "breadcrumb": "Hello world",
+      "intro": "The simplest BYO Invocations agent — arbitrary JSON in, streaming SSE out.",
+      "sampleIds": ["byo-inv-hello-world"]
+    },
+    "byo-inv-adapters": {
+      "id": "byo-inv-adapters",
+      "type": "question",
+      "breadcrumb": "Framework",
+      "title": "Which framework or SDK?",
+      "help": "Host your existing framework agent over Invocations.",
+      "options": [
+        {
+          "label": "LangGraph",
+          "description": "LangGraph conversational agent with client-managed sessions.",
+          "next": "byo-inv-langgraph-result"
+        },
+        {
+          "label": "Claude Agent SDK",
+          "description": "Claude Agent SDK with streaming, in Foundry mode.",
+          "next": "byo-inv-claude-result"
+        }
+      ]
+    },
+    "byo-inv-langgraph-result": {
+      "id": "byo-inv-langgraph-result",
+      "type": "result",
+      "breadcrumb": "LangGraph",
+      "intro": "A LangGraph conversational agent over Invocations with client-managed sessions.",
+      "sampleIds": ["byo-inv-langgraph-chat"]
+    },
+    "byo-inv-claude-result": {
+      "id": "byo-inv-claude-result",
+      "type": "result",
+      "breadcrumb": "Claude Agent SDK",
+      "intro": "A getting-started Claude Agent SDK agent with streaming over Invocations.",
+      "sampleIds": ["byo-inv-claude-agent-sdk"]
+    },
+    "byo-inv-toolbox-result": {
+      "id": "byo-inv-toolbox-result",
+      "type": "result",
+      "breadcrumb": "Toolbox",
+      "intro": "A BYO Invocations agent wired to a Foundry Toolbox MCP endpoint.",
+      "sampleIds": ["byo-inv-toolbox"]
+    },
+    "byo-inv-notetaking-result": {
+      "id": "byo-inv-notetaking-result",
+      "type": "result",
+      "breadcrumb": "Notetaking",
+      "intro": "A note-taking agent using the Invocations protocol.",
+      "sampleIds": ["byo-inv-notetaking"]
+    },
+    "byo-inv-agui-result": {
+      "id": "byo-inv-agui-result",
+      "type": "result",
+      "breadcrumb": "AG-UI",
+      "intro": "An agent using the AG-UI streaming protocol via the Invocations endpoint.",
+      "sampleIds": ["byo-inv-ag-ui"]
+    },
+    "byo-inv-copilot-result": {
+      "id": "byo-inv-copilot-result",
+      "type": "result",
+      "breadcrumb": "GitHub Copilot",
+      "intro": "An agent that integrates with GitHub Copilot as the AI backbone.",
+      "sampleIds": ["byo-inv-github-copilot"]
+    },
+    "byo-inv-hitl-result": {
+      "id": "byo-inv-hitl-result",
+      "type": "result",
+      "breadcrumb": "Human-in-the-loop",
+      "intro": "A long-running agent that pauses for human approval before continuing.",
+      "sampleIds": ["byo-inv-hitl"]
+    },
+    "byo-inv-eventgrid-result": {
+      "id": "byo-inv-eventgrid-result",
+      "type": "result",
+      "breadcrumb": "Event Grid",
+      "intro": "Event-driven: Storage → Event Grid → agent; summarizes a new blob back to Storage.",
+      "sampleIds": ["byo-inv-event-grid"]
+    },
+    "byo-inv-diagnostic-result": {
+      "id": "byo-inv-diagnostic-result",
+      "type": "result",
+      "breadcrumb": "Diagnostic",
+      "intro": "A no-LLM agent that probes DNS/TCP/TLS/HTTP and reports what the runtime can reach.",
+      "sampleIds": ["byo-inv-diagnostic"]
+    },
+    "byo-voice": {
+      "id": "byo-voice",
+      "type": "question",
+      "breadcrumb": "Voice Live",
+      "title": "Which Voice Live pattern fits?",
+      "help": "Azure Voice Live adds real-time voice to a Responses or Invocations agent.",
+      "options": [
+        {
+          "label": "Minimal hello-world (Invocations)",
+          "description": "The smallest Voice Live-compatible Invocations agent.",
+          "next": "byo-vl-hello-result"
+        },
+        {
+          "label": "A task-oriented voice agent (hotel booking)",
+          "description": "A booking assistant driven by voice (Invocations).",
+          "next": "byo-vl-hotel-result"
+        },
+        {
+          "label": "Foreground + background agents (Responses)",
+          "description": "Parallel foreground and background agents.",
+          "next": "byo-vl-fgbg-result"
+        },
+        {
+          "label": "LangGraph with handoff (Responses)",
+          "description": "A LangGraph Responses agent with handoff, Voice Live-ready.",
+          "next": "byo-vl-handoff-result"
+        },
+        {
+          "label": "Just the client to talk to a deployed agent",
+          "description": "The shared voicelive_client.py (a client, not an agent).",
+          "next": "byo-vl-client-result"
+        }
+      ]
+    },
+    "byo-vl-hello-result": {
+      "id": "byo-vl-hello-result",
+      "type": "result",
+      "breadcrumb": "Hello world",
+      "intro": "A minimal Invocations agent compatible with Azure Voice Live.",
+      "sampleIds": ["byo-vl-hello-world"]
+    },
+    "byo-vl-hotel-result": {
+      "id": "byo-vl-hotel-result",
+      "type": "result",
+      "breadcrumb": "Hotel booking",
+      "intro": "A hotel-booking Invocations agent driven by real-time voice.",
+      "sampleIds": ["byo-vl-hotel-booking"]
+    },
+    "byo-vl-fgbg-result": {
+      "id": "byo-vl-fgbg-result",
+      "type": "result",
+      "breadcrumb": "Foreground + background",
+      "intro": "A Responses Voice Live agent with parallel foreground and background agents.",
+      "sampleIds": ["byo-vl-foreground-background"]
+    },
+    "byo-vl-handoff-result": {
+      "id": "byo-vl-handoff-result",
+      "type": "result",
+      "breadcrumb": "LangGraph handoff",
+      "intro": "A LangGraph Responses agent with handoff, made Voice Live-compatible.",
+      "sampleIds": ["byo-vl-handoff-langgraph"]
+    },
+    "byo-vl-client-result": {
+      "id": "byo-vl-client-result",
+      "type": "result",
+      "breadcrumb": "Voice client",
+      "intro": "The shared Voice Live client for talking to a deployed Responses agent.",
+      "sampleIds": ["byo-vl-client"]
+    },
+    "byo-ws": {
+      "id": "byo-ws",
+      "type": "question",
+      "breadcrumb": "Real-time audio",
+      "title": "Which real-time audio stack?",
+      "help": "The invocations_ws protocol: you own the WebSocket/WebRTC audio transport.",
+      "options": [
+        {
+          "label": "Minimal Voice Live over WebSocket",
+          "description": "~250-line agent bridging a browser socket to a Voice Live session.",
+          "next": "byo-ws-hello-result"
+        },
+        {
+          "label": "Pipecat over WebSocket (audio on the socket)",
+          "description": "Pipecat pipeline with PCM audio framed over the WebSocket.",
+          "next": "byo-ws-pipecat-ws-result"
+        },
+        {
+          "label": "Pipecat with WebRTC media",
+          "description": "Signaling on the socket; media over a WebRTC peer connection.",
+          "next": "byo-ws-pipecat-webrtc-result"
+        },
+        {
+          "label": "LiveKit",
+          "description": "LiveKit Agents framework; socket returns room credentials.",
+          "next": "byo-ws-livekit-result"
+        },
+        {
+          "label": "Duplex foreground + background",
+          "description": "A low-latency router plus autonomous background workers.",
+          "next": "byo-ws-duplex-result"
+        }
+      ]
+    },
+    "byo-ws-hello-result": {
+      "id": "byo-ws-hello-result",
+      "type": "result",
+      "breadcrumb": "Hello world",
+      "intro": "The smallest invocations_ws agent, bridging each socket to a Voice Live session.",
+      "sampleIds": ["byo-ws-hello-world"]
+    },
+    "byo-ws-pipecat-ws-result": {
+      "id": "byo-ws-pipecat-ws-result",
+      "type": "result",
+      "breadcrumb": "Pipecat WS",
+      "intro": "A pipecat voice agent with PCM audio over the WebSocket.",
+      "sampleIds": ["byo-ws-pipecat-ws"]
+    },
+    "byo-ws-pipecat-webrtc-result": {
+      "id": "byo-ws-pipecat-webrtc-result",
+      "type": "result",
+      "breadcrumb": "Pipecat WebRTC",
+      "intro": "The same pipecat bot with signaling on the socket and media over WebRTC.",
+      "sampleIds": ["byo-ws-pipecat-webrtc"]
+    },
+    "byo-ws-livekit-result": {
+      "id": "byo-ws-livekit-result",
+      "type": "result",
+      "breadcrumb": "LiveKit",
+      "intro": "A LiveKit voice agent; media flows browser ↔ LiveKit ↔ agent.",
+      "sampleIds": ["byo-ws-livekit"]
+    },
+    "byo-ws-duplex-result": {
+      "id": "byo-ws-duplex-result",
+      "type": "result",
+      "breadcrumb": "Duplex live",
+      "intro": "A Voice Live agent with a foreground router plus autonomous background workers.",
+      "sampleIds": ["byo-ws-duplex-live"]
+    }
+  }
+}

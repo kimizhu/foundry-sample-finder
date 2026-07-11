@@ -56,24 +56,24 @@ window.HA_TREE = {
       "help": "Level 2 — this picks the protocol/channel. Start with Responses if you're unsure; you can add other endpoints later.",
       "options": [
         {
-          "label": "A conversational chat or assistant",
-          "description": "OpenAI-compatible clients; the platform manages history, streaming, and background execution (Responses protocol).",
+          "label": "Expose a standard, OpenAI-compatible API",
+          "description": "Responses protocol — the platform manages conversation history, streaming, and background runs. Least code to write.",
           "next": "af-capability",
           "recommended": true
         },
         {
-          "label": "A webhook, structured JSON, batch job, or custom streaming",
-          "description": "You define the payload schema and manage sessions yourself (Invocations protocol).",
+          "label": "Expose a custom API you define and control",
+          "description": "Invocations protocol — you design the request/response payload and manage sessions and streaming yourself. Maximum control.",
           "next": "af-inv-result"
         },
         {
           "label": "Publish to Microsoft Teams / Microsoft 365",
-          "description": "Responses logic plus the Activity protocol for the Teams channel.",
+          "description": "The standard API plus the Activity protocol, so your agent runs inside Microsoft Teams / Microsoft 365.",
           "next": "af-teams-result"
         },
         {
           "label": "Delegate to, or be called by, other agents",
-          "description": "Agent-to-agent delegation over the A2A protocol.",
+          "description": "The standard API plus the agent-to-agent (A2A) protocol for multi-agent workflows.",
           "next": "af-a2a-result"
         }
       ]
@@ -413,19 +413,19 @@ window.HA_TREE = {
       "help": "Level 2 — protocol/channel for your existing LangGraph graph.",
       "options": [
         {
-          "label": "A conversational chat or assistant",
-          "description": "OpenAI-compatible Responses protocol with native session and streaming wiring.",
+          "label": "Expose a standard, OpenAI-compatible API",
+          "description": "Responses protocol wired to your LangGraph graph — platform-managed sessions and streaming.",
           "next": "lg-capability",
           "recommended": true
         },
         {
-          "label": "A webhook / structured JSON / custom sessions",
-          "description": "Invocations protocol with client-managed session state via a checkpointer.",
+          "label": "Expose a custom API you define and control",
+          "description": "Invocations protocol with client-managed session state via a checkpointer — you own the payload and streaming.",
           "next": "lg-inv-result"
         },
         {
           "label": "Delegate to, or be called by, other agents",
-          "description": "A2A delegation between two LangGraph agents.",
+          "description": "The standard API plus the agent-to-agent (A2A) protocol, between two LangGraph agents.",
           "next": "lg-a2a-result"
         }
       ]
@@ -579,24 +579,24 @@ window.HA_TREE = {
       "help": "Level 2 — this maps to the protocol your BYO agent speaks.",
       "options": [
         {
-          "label": "A conversational chat or assistant",
-          "description": "OpenAI-compatible Responses protocol.",
+          "label": "Expose a standard, OpenAI-compatible API",
+          "description": "Responses protocol — any OpenAI-compatible client works; the platform manages sessions and streaming.",
           "next": "byo-resp-capability",
           "recommended": true
         },
         {
-          "label": "A webhook, structured JSON, or custom streaming",
-          "description": "Arbitrary JSON in / SSE out over the Invocations protocol.",
+          "label": "Expose a custom API you define and control",
+          "description": "Invocations protocol — arbitrary JSON in / SSE out; you define the schema and manage sessions yourself.",
           "next": "byo-inv-capability"
         },
         {
-          "label": "Real-time voice via Azure Voice Live",
-          "description": "Attach a managed voice layer (STT+LLM+TTS) to a Responses or Invocations agent.",
+          "label": "Add real-time voice via Azure Voice Live",
+          "description": "A managed real-time voice layer (speech-to-text + LLM + text-to-speech) on top of a standard or custom API.",
           "next": "byo-voice"
         },
         {
-          "label": "Real-time streaming audio over WebSocket / WebRTC",
-          "description": "You own the audio transport — Pipecat, LiveKit, or raw Voice Live over a socket.",
+          "label": "Stream real-time audio over WebSocket / WebRTC",
+          "description": "You own the real-time audio transport — Pipecat, LiveKit, or raw Voice Live over a socket.",
           "next": "byo-ws"
         }
       ]

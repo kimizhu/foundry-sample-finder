@@ -27,11 +27,11 @@ window.HA_TREE = {
         },
         {
           "label": "I'm using LangGraph / LangChain",
-          "description": "Use the langchain-azure-ai SDK — Microsoft officially supports the hosting integration, with native sessions and streaming that bring your existing LangGraph graphs to Foundry.",
+          "description": "Use the langchain-azure-ai SDK — Microsoft's official hosting integration that brings your existing LangGraph graphs to Foundry.",
           "next": "lg-interaction"
         },
         {
-          "label": "I want to bring my own model SDK or another framework",
+          "label": "I want to use a model SDK directly or bring a third-party framework",
           "description": "Call a Foundry model directly with just a model SDK, or bring a third-party framework: the OpenAI Agents SDK, Anthropic Claude Agent SDK, GitHub Copilot SDK, etc.",
           "next": "byo-start"
         }

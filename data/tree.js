@@ -21,8 +21,8 @@ window.HA_TREE = {
           "recommended": true
         },
         {
-          "label": "I'm building on Microsoft Agent Framework",
-          "description": "Microsoft's own agent framework, with the deepest, most native Foundry integration — sessions, tools, memory, and streaming built in. The best starting point for a brand-new agent.",
+          "label": "I want the deepest, most native Foundry integration",
+          "description": "Microsoft Agent Framework — Microsoft's own agent SDK, with sessions, tools, memory, and streaming built into Foundry. The best starting point for a brand-new agent.",
           "next": "af-interaction"
         },
         {

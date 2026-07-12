@@ -12,7 +12,6 @@ window.HA_TREE = {
       "type": "question",
       "breadcrumb": "Start",
       "title": "Where are you starting from?",
-      "help": "New here? Start with the recommended option. Already committed to a framework or have existing code? Jump straight to it.",
       "options": [
         {
           "label": "I'm just getting started",

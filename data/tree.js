@@ -21,18 +21,18 @@ window.HA_TREE = {
           "recommended": true
         },
         {
-          "label": "I'm building a new agent from scratch",
-          "description": "A greenfield build on Microsoft Agent Framework — also the home for AutoGen and Semantic Kernel. The deepest, best-integrated set of samples.",
+          "label": "I'm building on Microsoft Agent Framework",
+          "description": "Microsoft's own agent framework, with the deepest, most native Foundry integration — sessions, tools, memory, and streaming built in. The best starting point for a brand-new agent.",
           "next": "af-interaction"
         },
         {
-          "label": "I already have LangGraph / LangChain code",
-          "description": "Host your existing LangGraph graphs on Foundry with minimal changes.",
+          "label": "I'm using LangGraph / LangChain",
+          "description": "Microsoft officially supports the hosting integration through the langchain-azure-ai SDK — native sessions and streaming that bring your existing LangGraph graphs to Foundry.",
           "next": "lg-interaction"
         },
         {
-          "label": "I already have an agent in another framework",
-          "description": "CrewAI, the OpenAI Agents SDK, the Claude Agent SDK, or a custom stack — host it unchanged (Bring Your Own).",
+          "label": "I'm bringing another SDK or my own stack",
+          "description": "Any other framework — the OpenAI Agents SDK, Anthropic Claude Agent SDK, GitHub Copilot SDK, CrewAI, real-time voice stacks, or fully custom code — hosted with the Foundry server SDKs.",
           "next": "byo-start"
         }
       ]

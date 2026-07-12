@@ -31,8 +31,8 @@ window.HA_TREE = {
           "next": "lg-interaction"
         },
         {
-          "label": "I'm bringing a model SDK or another agent framework",
-          "description": "Call a Foundry model directly with just a model SDK — the Azure AI Projects SDK, no agent framework — or bring a third-party agent framework: the OpenAI Agents SDK, Anthropic Claude Agent SDK, Pydantic AI, or GitHub Copilot SDK. Everything here is hosted with the Foundry server SDKs over the Responses or Invocations protocol.",
+          "label": "I'm bringing a model SDK or another framework",
+          "description": "Call a Foundry model directly with just a model SDK, or bring a third-party framework: the OpenAI Agents SDK, Anthropic Claude Agent SDK, GitHub Copilot SDK, etc.",
           "next": "byo-start"
         }
       ]

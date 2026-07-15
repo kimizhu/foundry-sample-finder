@@ -13,39 +13,59 @@ Built as **plain static HTML/CSS/JS — no build step**. Double-click
 
 ## Why a decision tree?
 
-The VS Code extension currently surfaces every sample as a flat list. That's
-overwhelming and gives no sense of *where to start* or *how samples relate*.
-The official docs already lead with two orthogonal axes, so the tree uses them
-as its first two levels and adds a capability theme as the third:
+### The problem
+
+Microsoft Foundry ships **60+ hosted-agent samples** in a single folder of the
+[`foundry-samples`](https://github.com/microsoft-foundry/foundry-samples/tree/main/samples/python/hosted-agents)
+repo, and the VS Code extension surfaces every one of them as a **flat,
+alphabetical list**. For anyone who isn't already an expert, that list is a wall
+of near-identical, jargon-heavy folder names (`byo-inv-ag-ui`,
+`af-resp-basic`, `langgraph-invocations-hitl`…) with no signal about:
+
+- **Where to start** — which sample is the "hello world" versus a niche edge case.
+- **How samples relate** — that they actually vary along a few consistent axes
+  (which framework you build on, how clients talk to the agent, what capability
+  is being demonstrated).
+- **What's even available** — the folder READMEs are partially out of date, so
+  scanning them can *hide* samples rather than surface them.
+
+The result is classic **choice overload**: a new user opens the list, can't tell
+the options apart, and either picks the wrong starting point or abandons the
+sample gallery altogether. The very artifacts meant to accelerate adoption end
+up being a barrier to it.
+
+### Why we built this
+
+The key insight is that the flat list isn't actually unstructured — it just
+*looks* that way. Every sample can be placed on the same small set of decisions,
+and the official docs already lead with two of them. This project makes that
+hidden structure **explicit and navigable**: instead of scrolling ~60 folders,
+you answer a few plain-language questions and are handed the sample(s) that fit.
 
 | Level | Question | Picks |
 |-------|----------|-------|
 | **1** | Where are you starting from? | **Framework** — Agent Framework · LangGraph · Bring Your Own |
-| **2** | How will clients interact with the agent? | **Protocol / channel** — Responses · Invocations · Invocations WS · A2A · Activity |
+| **2** | How will clients interact with the agent? | **Protocol / channel** — Responses · Invocations · A2A · Activity |
 | **3** | What capability are you adding? | **Category theme** → a specific sample (or small set) |
 
-The tree only offers branches that actually have samples for the chosen
-framework (e.g. Voice Live and WebSocket transports are Bring-Your-Own only;
-the Teams/Activity channel is Agent-Framework only). Every leaf resolves to one
-or more real samples in the catalog.
+The tree only ever offers branches that **actually have samples** for the
+choices you've made (e.g. the Teams/Activity channel is Agent-Framework only),
+so you can never walk down a path that dead-ends. Every leaf resolves to one or
+more **real samples** in the catalog.
 
-### Single-page accordion (no step-by-step wizard)
+### What value it delivers
 
-The guide renders the **entire tree on one page** as a nested accordion rather
-than walking users through separate pages one question at a time. A page-per-step
-flow tested poorly in production (high drop-off at each step), so here you just
-expand the branch you care about and drill in place; nothing navigates away.
-
-Every choice shows a **sample count** — how many distinct samples sit beneath it
-(e.g. the root reads *20 / 9 / 33 / 3*) — so you can see where the content is
-before drilling into a branch.
-
-Every question flags its recommended option with a **★ Recommended** pill
-(`"recommended": true` in `tree.json`), so there's always an obvious path forward.
-
-There's also a **Browse all samples** tab: full-text search plus
-framework / protocol / category / level filters over the whole catalog, for
-users who'd rather scan than be guided.
+- **Faster time-to-first-sample.** A newcomer goes from "60 folders, no idea" to
+  a concrete, runnable sample in two or three clicks — no prior knowledge of the
+  naming scheme required.
+- **Decision-making, not memorization.** Each level asks one thing in human
+  terms and narrows the field, turning an overwhelming catalog into a short,
+  guided conversation.
+- **No dead ends.** Because branches are pruned to what exists, users never hit
+  an empty result or an unsupported combination.
+- **A safe default for the unsure.** Every question flags a **★ Recommended**
+  option, so there's always an obvious path forward for people who just want the
+  best place to start.
 
 ---
 

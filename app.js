@@ -1,8 +1,9 @@
 /* Foundry Hosted-Agent Sample Finder — vanilla JS, no build step.
  *
- * Guide view: a single-page accordion. The whole decision tree stays on one
- * page; expanding a choice reveals the next question (nested) or the matching
- * samples inline. Every choice shows how many distinct samples sit beneath it.
+ * Guide view: a "Foundry base + building blocks" stack. The base is the minimal
+ * getting-started agent; each block is a capability you stack on top. Every block
+ * shows colored SDK dots (solid = an SDK already has a sample for it, hollow = not
+ * yet), mapped in the legend. Opening a block lists its samples grouped by SDK.
  *
  * Data loading: prefers window.HA_SAMPLES / window.HA_TREE injected by the
  * generated data/*.js shims (so the page works when opened via file://).
@@ -51,7 +52,7 @@ const state = {
   byId: new Map(),
   tree: null,
   view: "guide",
-  open: new Set(), // expanded accordion path keys
+  open: new Set(["base"]), // expanded block ids
 };
 
 async function loadData() {
@@ -75,38 +76,44 @@ function repoUrl(sample) {
   return state.meta.repoBaseUrl + sample.path;
 }
 
-/* ---------- sample counts (distinct, deduped, memoized) ---------- */
-const _reachMemo = new Map();
-function reachSet(nodeId, stack) {
-  if (_reachMemo.has(nodeId)) return _reachMemo.get(nodeId);
-  if (stack.has(nodeId)) return new Set(); // cycle guard (tree has none, but be safe)
-  const node = state.tree.nodes[nodeId];
-  let s;
-  if (!node) {
-    s = new Set();
-  } else if (node.type === "result") {
-    s = new Set(node.sampleIds || []);
-  } else {
-    s = new Set();
-    const next = new Set(stack);
-    next.add(nodeId);
-    for (const o of node.options) for (const id of reachSet(o.next, next)) s.add(id);
-  }
-  _reachMemo.set(nodeId, s);
-  return s;
+/* ---------- SDK helpers ---------- */
+function sdkMeta(key) {
+  return (state.meta.sdks && state.meta.sdks[key]) || { label: key, short: key, color: "#888888" };
 }
-function countFor(nodeId) {
-  return reachSet(nodeId, new Set()).size;
+function sdkOrder() {
+  return (state.tree.meta && state.tree.meta.sdkOrder) || Object.keys(state.meta.sdks || {});
+}
+function sdkDot(key, solid, title) {
+  const c = sdkMeta(key).color;
+  const style = solid ? `background:${c};border-color:${c}` : `background:transparent;border-color:${c}`;
+  return el("span", {
+    class: "dot" + (solid ? "" : " hollow"),
+    style,
+    title: title || sdkMeta(key).label,
+    "aria-hidden": "true",
+  });
 }
 function countLabel(n) {
   return `${n} ${n === 1 ? "sample" : "samples"}`;
+}
+function sdkCounts(node) {
+  const m = new Map();
+  for (const id of node.sampleIds || []) {
+    const s = state.byId.get(id);
+    if (!s || !s.sdk) continue;
+    m.set(s.sdk, (m.get(s.sdk) || 0) + 1);
+  }
+  return m;
 }
 
 /* ---------- sample card ---------- */
 function sampleCard(sample) {
   if (!sample) return null;
+  const sdkBadge = sample.sdk
+    ? el("span", { class: "badge sdk" }, [sdkDot(sample.sdk, true), " " + sdkMeta(sample.sdk).label])
+    : el("span", { class: `badge framework fw-${sample.framework}`, text: SHORT_FRAMEWORK[sample.framework] || sample.framework });
   const badges = el("div", { class: "badge-row" }, [
-    el("span", { class: `badge framework fw-${sample.framework}`, text: SHORT_FRAMEWORK[sample.framework] || sample.framework }),
+    sdkBadge,
     el("span", { class: "badge protocol", text: SHORT_PROTOCOL[sample.protocol] || sample.protocol }),
     el("span", { class: "badge category", text: state.meta.categories[sample.category] || sample.category }),
   ]);
@@ -128,81 +135,109 @@ function sampleCard(sample) {
   ]);
 }
 
-/* ---------- guide accordion ---------- */
-function toggle(key) {
-  if (state.open.has(key)) state.open.delete(key);
-  else state.open.add(key);
-  renderTree();
+/* ---------- guide: Foundry base + stackable building blocks ---------- */
+function toggleBlock(id) {
+  if (state.open.has(id)) state.open.delete(id);
+  else state.open.add(id);
+  renderGuide();
 }
 
-function renderOptions(questionNode, depth, pathKey) {
-  const list = el("div", { class: "acc-list" });
-  questionNode.options.forEach((opt, i) => {
-    const childKey = `${pathKey}>${i}`;
-    const childNode = state.tree.nodes[opt.next];
-    const isOpen = state.open.has(childKey);
-    const isResult = childNode && childNode.type === "result";
-    const isRec = !!opt.recommended;
-    const count = countFor(opt.next);
+function dotRow(node) {
+  const counts = sdkCounts(node);
+  const row = el("div", { class: "dot-row" });
+  for (const key of sdkOrder()) {
+    const n = counts.get(key) || 0;
+    const label = sdkMeta(key).label;
+    row.appendChild(sdkDot(key, n > 0, n > 0 ? `${label}: ${countLabel(n)}` : `${label}: no sample yet`));
+  }
+  return row;
+}
 
-    const row = el(
-      "button",
-      { class: "acc-row", "aria-expanded": String(isOpen), onclick: () => toggle(childKey) },
-      [
-        el("span", { class: "caret" + (isOpen ? " open" : ""), "aria-hidden": "true", text: "▸" }),
-        el("span", { class: "acc-label" }, [
-          el("span", { class: "acc-title" }, [
-            el("b", { text: opt.label }),
-            isRec
-              ? el("span", { class: "badge rec" }, [
-                  el("span", { class: "star", "aria-hidden": "true", text: "★" }),
-                  " Recommended",
-                ])
-              : null,
-          ]),
-          opt.description ? el("span", { class: "acc-desc", text: opt.description }) : null,
+function blockPanel(node) {
+  const panel = el("div", { class: "block-panel" });
+  if (node.description) panel.appendChild(el("p", { class: "block-longdesc", text: node.description }));
+  let any = false;
+  for (const key of sdkOrder()) {
+    const ids = (node.sampleIds || []).filter((id) => {
+      const s = state.byId.get(id);
+      return s && s.sdk === key;
+    });
+    if (!ids.length) continue;
+    any = true;
+    panel.appendChild(
+      el("div", { class: "sdk-group" }, [
+        el("div", { class: "sdk-group-head" }, [
+          sdkDot(key, true),
+          el("b", { text: sdkMeta(key).label }),
+          el("span", { class: "sdk-group-count", text: countLabel(ids.length) }),
         ]),
-        el("span", { class: "badge count" + (isResult ? " leaf" : ""), text: countLabel(count) }),
-      ]
+        el("div", { class: "card-grid" }, ids.map((id) => sampleCard(state.byId.get(id)))),
+      ])
     );
-
-    const item = el("div", { class: "acc-item", dataset: { depth: String(depth) } }, [row]);
-
-    if (isOpen && childNode) {
-      const panel = el("div", { class: "acc-panel" });
-      if (childNode.type === "question") {
-        if (childNode.title) panel.appendChild(el("p", { class: "nested-q", text: childNode.title }));
-        if (childNode.help) panel.appendChild(el("p", { class: "help", text: childNode.help }));
-        panel.appendChild(renderOptions(childNode, depth + 1, childKey));
-      } else {
-        if (childNode.intro) panel.appendChild(el("p", { class: "result-intro", text: childNode.intro }));
-        const samples = (childNode.sampleIds || []).map((id) => state.byId.get(id)).filter(Boolean);
-        const grid = el("div", { class: "card-grid" }, samples.map(sampleCard));
-        if (!samples.length) grid.appendChild(el("div", { class: "empty", text: "No samples mapped to this result." }));
-        panel.appendChild(grid);
-      }
-      item.appendChild(panel);
-    }
-    list.appendChild(item);
-  });
-  return list;
+  }
+  if (!any) panel.appendChild(el("div", { class: "empty", text: "No samples mapped to this block." }));
+  return panel;
 }
 
-function renderTree() {
+function blockCard(node, opts = {}) {
+  const isOpen = state.open.has(node.id);
+  const n = (node.sampleIds || []).length;
+  const row = el(
+    "button",
+    { class: "block-row", "aria-expanded": String(isOpen), onclick: () => toggleBlock(node.id) },
+    [
+      el("span", { class: "caret" + (isOpen ? " open" : ""), "aria-hidden": "true", text: "▸" }),
+      el("span", { class: "block-main" }, [
+        el("span", { class: "block-title-row" }, [
+          opts.base ? el("span", { class: "base-tag", text: "BASE" }) : null,
+          el("b", { class: "block-title", text: node.title }),
+          node.tagline ? el("span", { class: "block-tagline", text: node.tagline }) : null,
+        ]),
+        !isOpen && node.description ? el("span", { class: "block-desc", text: node.description }) : null,
+      ]),
+      el("span", { class: "block-right" }, [dotRow(node), el("span", { class: "block-count", text: countLabel(n) })]),
+    ]
+  );
+  const card = el("section", { class: "block-card" + (opts.base ? " base" : ""), dataset: { open: String(isOpen) } }, [row]);
+  if (isOpen) card.appendChild(blockPanel(node));
+  return card;
+}
+
+function sdkLegend() {
+  const items = sdkOrder().map((key) =>
+    el("li", { class: "legend-item" }, [sdkDot(key, true), el("span", { text: sdkMeta(key).label })])
+  );
+  return el("div", { class: "sdk-legend" }, [
+    el("span", { class: "legend-title", text: "SDK legend" }),
+    el("ul", { class: "legend-list" }, items),
+  ]);
+}
+
+function renderGuide() {
   const host = document.getElementById("guideTree");
   host.innerHTML = "";
-  const root = state.tree.nodes[state.tree.meta.rootId];
-  if (!root) {
-    host.appendChild(el("div", { class: "empty", text: "Decision tree failed to load." }));
+  if (!state.tree || !state.tree.base) {
+    host.appendChild(el("div", { class: "empty", text: "Guide failed to load." }));
     return;
   }
   host.appendChild(
-    el("div", { class: "tree-question-head" }, [
-      el("h2", { text: root.title }),
-      root.help ? el("p", { class: "help", text: root.help }) : null,
+    el("div", { class: "blocks-head" }, [
+      el("div", { class: "blocks-head-text" }, [
+        el("h2", { text: "Start with the Foundry base, then stack building blocks" }),
+        el("p", {
+          class: "blocks-sub",
+          text: "Each block’s dots show which SDKs already have a sample for it. Open a block to see the samples, grouped by SDK.",
+        }),
+      ]),
+      sdkLegend(),
     ])
   );
-  host.appendChild(renderOptions(root, 0, "root"));
+
+  const stack = el("div", { class: "stack" });
+  stack.appendChild(blockCard(state.tree.base, { base: true }));
+  stack.appendChild(el("div", { class: "stack-caption", text: "Stack building blocks on top ↓" }));
+  (state.tree.blocks || []).forEach((b) => stack.appendChild(blockCard(b)));
+  host.appendChild(stack);
 }
 
 /* ---------- browse ---------- */
@@ -304,7 +339,7 @@ async function main() {
   populateFilters();
   wireBrowse();
   wireTabs();
-  renderTree();
+  renderGuide();
   setView("guide");
 }
 

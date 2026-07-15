@@ -1,927 +1,166 @@
 {
   "meta": {
-    "version": "1.0",
-    "rootId": "start",
-    "title": "Foundry Hosted-Agent Sample Finder",
-    "description": "A guided decision tree that turns the flat list of hosted-agent samples into a few answerable questions. Level 1 = where you're starting from (framework), Level 2 = how clients interact (protocol/channel), Level 3 = the capability you're adding."
+    "model": "blocks",
+    "source": "microsoft-foundry/foundry-samples",
+    "note": "Building-blocks model: a Foundry base agent plus capability blocks you stack on top. Each block's SDK-dot coverage is derived from the referenced samples' 'sdk' field in samples.json (meta.sdks holds the legend). Voice/WebSocket samples are intentionally excluded.",
+    "sdkOrder": [
+      "agent-framework",
+      "langgraph",
+      "native",
+      "openai-agents",
+      "claude",
+      "pydantic-ai",
+      "github-copilot"
+    ]
   },
-  "nodes": {
-    "start": {
-      "id": "start",
-      "type": "question",
-      "breadcrumb": "Start",
-      "title": "Where are you starting from?",
-      "options": [
-        {
-          "label": "I'm just getting started",
-          "description": "New to Foundry hosted agents. Begin with the recommended first agents — one per framework — for the quickest path to something running.",
-          "next": "notsure-result",
-          "recommended": true
-        },
-        {
-          "label": "I want the deepest, most native Foundry integration",
-          "description": "Use Microsoft Agent Framework — Microsoft's own agent SDK, with sessions, tools, memory, and streaming built into Foundry. The best starting point for a brand-new agent.",
-          "next": "af-interaction"
-        },
-        {
-          "label": "I'm using LangGraph / LangChain",
-          "description": "Use the langchain-azure-ai SDK — Microsoft's official hosting integration that brings your existing LangGraph graphs to Foundry.",
-          "next": "lg-interaction"
-        },
-        {
-          "label": "I want to use a model SDK directly or bring a third-party framework",
-          "description": "Call a Foundry model directly with just a model SDK, or bring a third-party framework: the OpenAI Agents SDK, Anthropic Claude Agent SDK, GitHub Copilot SDK, etc.",
-          "next": "byo-start"
-        }
-      ]
-    },
-    "notsure-result": {
-      "id": "notsure-result",
-      "type": "result",
-      "breadcrumb": "Recommended start",
-      "intro": "Not sure which framework yet? Start with the Agent Framework Basic agent — the tightest Foundry integration and the clearest learning path. Already on LangGraph? LangGraph Chat is the equivalent. Prefer to stay minimal in your own code? The Bring Your Own hello-world is the smallest possible start.",
+  "base": {
+    "id": "base",
+    "title": "Foundry base · Basic agent",
+    "tagline": "Start here — a minimal chat agent",
+    "description": "Every hosted agent starts here: a minimal agent that handles request/response and multi-turn conversation. Choose your SDK, get it running on Foundry, then stack the building blocks below on top.",
+    "sampleIds": [
+      "af-resp-basic",
+      "af-inv-basic",
+      "lg-resp-chat",
+      "lg-inv-chat",
+      "byo-resp-hello-world",
+      "byo-inv-hello-world"
+    ]
+  },
+  "blocks": [
+    {
+      "id": "tools",
+      "title": "Tools & MCP",
+      "tagline": "local tools · MCP · toolbox",
+      "description": "Give the agent capabilities: custom local function tools, remote MCP servers, and the managed Foundry toolbox.",
       "sampleIds": [
-        "af-resp-basic",
-        "lg-resp-chat",
-        "byo-resp-hello-world"
+        "af-resp-tools",
+        "af-resp-mcp",
+        "af-resp-foundry-toolbox",
+        "lg-resp-toolbox",
+        "lg-resp-mcp",
+        "byo-resp-toolbox",
+        "byo-resp-langgraph-toolbox",
+        "byo-resp-langgraph-toolbox-user-identity",
+        "byo-inv-toolbox"
       ]
     },
-    "af-interaction": {
-      "id": "af-interaction",
-      "type": "question",
-      "breadcrumb": "Agent Framework",
-      "title": "How will people or systems interact with your agent?",
-      "help": "Level 2 — this picks the protocol/channel. Start with Responses if you're unsure; you can add other endpoints later.",
-      "options": [
-        {
-          "label": "Expose a standard, OpenAI-compatible API",
-          "description": "Responses protocol — the platform manages conversation history, streaming, and background runs. Least code to write.",
-          "next": "af-capability",
-          "recommended": true
-        },
-        {
-          "label": "Expose a custom API you define and control",
-          "description": "Invocations protocol — you design the request/response payload and manage sessions and streaming yourself. Maximum control.",
-          "next": "af-inv-result"
-        },
-        {
-          "label": "Publish to Microsoft Teams / Microsoft 365",
-          "description": "The standard API plus the Activity protocol, so your agent runs inside Microsoft Teams / Microsoft 365.",
-          "next": "af-teams-result"
-        },
-        {
-          "label": "Delegate to, or be called by, other agents",
-          "description": "The standard API plus the agent-to-agent (A2A) protocol for multi-agent workflows.",
-          "next": "af-a2a-result"
-        }
-      ]
-    },
-    "af-capability": {
-      "id": "af-capability",
-      "type": "question",
-      "breadcrumb": "Chat (Responses)",
-      "title": "What do you want your agent to do?",
-      "help": "Level 3 — the capability you're adding on top of a conversational agent.",
-      "options": [
-        {
-          "label": "Just the basics — chat and multi-turn conversation",
-          "description": "Deploy your first agent and hold a conversation.",
-          "next": "af-basic-result",
-          "recommended": true
-        },
-        {
-          "label": "Use tools / connect to external systems",
-          "description": "Local functions, remote MCP servers, or a Foundry Toolbox.",
-          "next": "af-tools"
-        },
-        {
-          "label": "Ground answers in my knowledge (RAG, memory, skills)",
-          "description": "Azure AI Search, Foundry IQ, persistent memory, or packaged skills.",
-          "next": "af-knowledge"
-        },
-        {
-          "label": "Work with uploaded files",
-          "description": "Manipulate and reason over files uploaded to the session.",
-          "next": "af-files-result"
-        },
-        {
-          "label": "Coordinate multiple agents or steps",
-          "description": "Sequential workflows, declarative YAML workflows, or A2A delegation.",
-          "next": "af-orchestration"
-        },
-        {
-          "label": "Harden it for production",
-          "description": "Observability, managed-identity access, content safety, or optimization.",
-          "next": "af-production"
-        },
-        {
-          "label": "Automate a browser",
-          "description": "Browse, scrape, and fill forms with the Browser Automation tool.",
-          "next": "af-browser-result"
-        }
-      ]
-    },
-    "af-basic-result": {
-      "id": "af-basic-result",
-      "type": "result",
-      "breadcrumb": "Basics",
-      "intro": "The Basic agent is your starting point — request/response plus multi-turn conversations via previous_response_id.",
+    {
+      "id": "knowledge",
+      "title": "Knowledge, RAG & Memory",
+      "tagline": "grounding · search · memory",
+      "description": "Ground answers in your data: file-based skills, Azure AI Search RAG, semantic memory, and Foundry IQ agentic retrieval.",
       "sampleIds": [
-        "af-resp-basic"
-      ]
-    },
-    "af-tools": {
-      "id": "af-tools",
-      "type": "question",
-      "breadcrumb": "Tools",
-      "title": "What kind of tools?",
-      "help": "All three plug tools into a Responses agent — they differ in where the tools live.",
-      "options": [
-        {
-          "label": "Local Python functions I write",
-          "description": "Register and invoke your own tool functions.",
-          "next": "af-tools-local-result",
-          "recommended": true
-        },
-        {
-          "label": "A remote MCP server",
-          "description": "Consume tools from an external MCP provider (e.g. GitHub).",
-          "next": "af-tools-mcp-result"
-        },
-        {
-          "label": "A managed Foundry Toolbox",
-          "description": "Provision a toolbox and discover tools at runtime.",
-          "next": "af-tools-toolbox-result"
-        }
-      ]
-    },
-    "af-tools-local-result": {
-      "id": "af-tools-local-result",
-      "type": "result",
-      "breadcrumb": "Local tools",
-      "intro": "Register custom local tool functions alongside the LLM.",
-      "sampleIds": [
-        "af-resp-tools"
-      ]
-    },
-    "af-tools-mcp-result": {
-      "id": "af-tools-mcp-result",
-      "type": "result",
-      "breadcrumb": "MCP",
-      "intro": "Connect to a remote MCP server to consume external tools and retrieval.",
-      "sampleIds": [
-        "af-resp-mcp"
-      ]
-    },
-    "af-tools-toolbox-result": {
-      "id": "af-tools-toolbox-result",
-      "type": "result",
-      "breadcrumb": "Toolbox",
-      "intro": "Use a managed Foundry Toolbox for tool access.",
-      "sampleIds": [
-        "af-resp-foundry-toolbox"
-      ]
-    },
-    "af-knowledge": {
-      "id": "af-knowledge",
-      "type": "question",
-      "breadcrumb": "Knowledge",
-      "title": "How do you want to bring in knowledge?",
-      "help": "Ground the agent in your own data or give it memory.",
-      "options": [
-        {
-          "label": "RAG over an Azure AI Search index",
-          "description": "Classic retrieval-augmented generation grounded in indexed documents.",
-          "next": "af-knowledge-rag-result",
-          "recommended": true
-        },
-        {
-          "label": "Agentic retrieval from a Foundry IQ knowledge base",
-          "description": "A Foundry IQ knowledge base reached over a Foundry Toolbox MCP endpoint, keyless.",
-          "next": "af-knowledge-iq-result"
-        },
-        {
-          "label": "Persistent memory of user facts across sessions",
-          "description": "Remember users between conversations with a Foundry Memory Store.",
-          "next": "af-knowledge-memory-result"
-        },
-        {
-          "label": "Packaged, file-based skills",
-          "description": "Decouple tone/policy/procedures from code as reusable skills.",
-          "next": "af-skills-result"
-        }
-      ]
-    },
-    "af-knowledge-rag-result": {
-      "id": "af-knowledge-rag-result",
-      "type": "result",
-      "breadcrumb": "Azure AI Search RAG",
-      "intro": "Ground answers in documents indexed in Azure AI Search.",
-      "sampleIds": [
-        "af-resp-azure-search-rag"
-      ]
-    },
-    "af-knowledge-iq-result": {
-      "id": "af-knowledge-iq-result",
-      "type": "result",
-      "breadcrumb": "Foundry IQ",
-      "intro": "Answer from a Foundry IQ knowledge base (Azure AI Search agentic retrieval) via a toolbox MCP endpoint.",
-      "sampleIds": [
+        "af-resp-skills",
+        "af-resp-azure-search-rag",
+        "af-resp-foundry-skills",
+        "af-resp-foundry-memory",
         "af-resp-foundry-iq-toolbox"
       ]
     },
-    "af-knowledge-memory-result": {
-      "id": "af-knowledge-memory-result",
-      "type": "result",
-      "breadcrumb": "Memory",
-      "intro": "Persist semantic memory of user facts across sessions.",
+    {
+      "id": "files",
+      "title": "Files & Documents",
+      "tagline": "uploads · code interpreter",
+      "description": "Let the agent accept file uploads and work with documents, including a code interpreter.",
       "sampleIds": [
-        "af-resp-foundry-memory"
-      ]
-    },
-    "af-skills-result": {
-      "id": "af-skills-result",
-      "type": "result",
-      "breadcrumb": "Skills",
-      "intro": "Two ways to package skills: native file-based skills bundled with the agent, or Foundry Skills managed via the REST API and downloaded at startup.",
-      "sampleIds": [
-        "af-resp-skills",
-        "af-resp-foundry-skills"
-      ]
-    },
-    "af-files-result": {
-      "id": "af-files-result",
-      "type": "result",
-      "breadcrumb": "Files",
-      "intro": "Handle files uploaded to the session and reason over their contents.",
-      "sampleIds": [
-        "af-resp-files"
-      ]
-    },
-    "af-orchestration": {
-      "id": "af-orchestration",
-      "type": "question",
-      "breadcrumb": "Orchestration",
-      "title": "How do you want to coordinate work?",
-      "help": "From in-code pipelines to declarative workflows to cross-agent delegation.",
-      "options": [
-        {
-          "label": "Chain steps in code (sequential workflow)",
-          "description": "Compose prompts/agents into a multi-step pipeline.",
-          "next": "af-orch-workflow-result",
-          "recommended": true
-        },
-        {
-          "label": "Author the workflow declaratively in YAML",
-          "description": "A customer-support triage workflow defined entirely in YAML.",
-          "next": "af-orch-declarative-result"
-        },
-        {
-          "label": "Delegate to another agent over A2A",
-          "description": "A caller agent delegates to an executor exposed as an A2A endpoint.",
-          "next": "af-a2a-result"
-        }
-      ]
-    },
-    "af-orch-workflow-result": {
-      "id": "af-orch-workflow-result",
-      "type": "result",
-      "breadcrumb": "Workflows",
-      "intro": "Chain prompts/agents into a sequential orchestrated pipeline.",
-      "sampleIds": [
-        "af-resp-workflows"
-      ]
-    },
-    "af-orch-declarative-result": {
-      "id": "af-orch-declarative-result",
-      "type": "result",
-      "breadcrumb": "Declarative",
-      "intro": "A multi-turn triage workflow authored in YAML that invokes specialist Foundry agents.",
-      "sampleIds": [
-        "af-resp-declarative"
-      ]
-    },
-    "af-production": {
-      "id": "af-production",
-      "type": "question",
-      "breadcrumb": "Production",
-      "title": "Which production concern?",
-      "help": "Operational hardening and governance for a real deployment.",
-      "options": [
-        {
-          "label": "Observability — logging, metrics, tracing",
-          "description": "Distributed traces and metrics to Application Insights.",
-          "next": "af-prod-observability-result",
-          "recommended": true
-        },
-        {
-          "label": "Call Azure services with managed identity (no keys)",
-          "description": "Blob Storage and Service Bus via per-agent Entra identity + RBAC.",
-          "next": "af-prod-downstream-result"
-        },
-        {
-          "label": "Add a content-safety guardrail",
-          "description": "Screen prompts and responses against a Responsible AI policy.",
-          "next": "af-prod-safety-result"
-        },
-        {
-          "label": "Optimize the agent's instructions and tools",
-          "description": "Wire the agent for the Foundry Agent Optimizer (preview).",
-          "next": "af-prod-optimize-result"
-        }
-      ]
-    },
-    "af-prod-observability-result": {
-      "id": "af-prod-observability-result",
-      "type": "result",
-      "breadcrumb": "Observability",
-      "intro": "Add logging, metrics, and distributed tracing to Application Insights.",
-      "sampleIds": [
-        "af-resp-observability"
-      ]
-    },
-    "af-prod-downstream-result": {
-      "id": "af-prod-downstream-result",
-      "type": "result",
-      "breadcrumb": "Managed identity",
-      "intro": "Access Azure Blob Storage and Service Bus with the agent's per-agent identity — no connection strings.",
-      "sampleIds": [
-        "af-resp-downstream-azure"
-      ]
-    },
-    "af-prod-safety-result": {
-      "id": "af-prod-safety-result",
-      "type": "result",
-      "breadcrumb": "Content safety",
-      "intro": "Attach a content-safety guardrail so the platform screens inputs and outputs.",
-      "sampleIds": [
-        "af-resp-content-safety"
-      ]
-    },
-    "af-prod-optimize-result": {
-      "id": "af-prod-optimize-result",
-      "type": "result",
-      "breadcrumb": "Optimizer",
-      "intro": "A travel-approval agent wired for the Foundry Agent Optimizer (instructions, skills, tool descriptions).",
-      "sampleIds": [
-        "af-resp-optimization-travel"
-      ]
-    },
-    "af-browser-result": {
-      "id": "af-browser-result",
-      "type": "result",
-      "breadcrumb": "Browser automation",
-      "intro": "Automate a real browser (browse, scrape, fill forms) via Foundry Toolbox + Azure Playwright Service.",
-      "sampleIds": [
-        "af-resp-browser-automation"
-      ]
-    },
-    "af-inv-result": {
-      "id": "af-inv-result",
-      "type": "result",
-      "breadcrumb": "Invocations",
-      "intro": "Use the Invocations protocol for full HTTP control. Learn the handler/session pattern here, then port any Responses capability (tools, RAG, memory) — only the HTTP handler differs.",
-      "sampleIds": [
-        "af-inv-basic"
-      ]
-    },
-    "af-teams-result": {
-      "id": "af-teams-result",
-      "type": "result",
-      "breadcrumb": "Teams / M365",
-      "intro": "Publish the agent to Teams / M365 and answer Teams & calendar questions with Work IQ tools.",
-      "sampleIds": [
-        "af-resp-teams-activity"
-      ]
-    },
-    "af-a2a-result": {
-      "id": "af-a2a-result",
-      "type": "result",
-      "breadcrumb": "A2A",
-      "intro": "A caller agent delegates over A2A to an executor exposed as an incoming A2A endpoint.",
-      "sampleIds": [
-        "af-a2a-delegation"
-      ]
-    },
-    "lg-interaction": {
-      "id": "lg-interaction",
-      "type": "question",
-      "breadcrumb": "LangGraph",
-      "title": "How will clients interact with your LangGraph agent?",
-      "help": "Level 2 — protocol/channel for your existing LangGraph graph.",
-      "options": [
-        {
-          "label": "Expose a standard, OpenAI-compatible API",
-          "description": "Responses protocol wired to your LangGraph graph — platform-managed sessions and streaming.",
-          "next": "lg-capability",
-          "recommended": true
-        },
-        {
-          "label": "Expose a custom API you define and control",
-          "description": "Invocations protocol with client-managed session state via a checkpointer — you own the payload and streaming.",
-          "next": "lg-inv-result"
-        },
-        {
-          "label": "Delegate to, or be called by, other agents",
-          "description": "The standard API plus the agent-to-agent (A2A) protocol, between two LangGraph agents.",
-          "next": "lg-a2a-result"
-        }
-      ]
-    },
-    "lg-capability": {
-      "id": "lg-capability",
-      "type": "question",
-      "breadcrumb": "Chat (Responses)",
-      "title": "What do you want it to do?",
-      "help": "Level 3 — the capability on top of a LangGraph Responses agent.",
-      "options": [
-        {
-          "label": "Basic chat with local tools",
-          "description": "Minimal graph with get_current_time and calculator tools.",
-          "next": "lg-chat-result",
-          "recommended": true
-        },
-        {
-          "label": "Use tools (Toolbox or MCP)",
-          "description": "Foundry Toolbox (web_search + GitHub Copilot MCP) or a raw remote MCP server.",
-          "next": "lg-tools"
-        },
-        {
-          "label": "Work with uploaded files",
-          "description": "Local filesystem tools plus a Toolbox code_interpreter.",
-          "next": "lg-files-result"
-        },
-        {
-          "label": "Chain multiple LLM nodes (StateGraph workflow)",
-          "description": "A custom StateGraph pipeline of specialized nodes.",
-          "next": "lg-workflows-result"
-        },
-        {
-          "label": "Pause for human approval (human-in-the-loop)",
-          "description": "Draft, then interrupt for approval before continuing.",
-          "next": "lg-hitl-result"
-        },
-        {
-          "label": "Add observability / tracing",
-          "description": "GenAI OpenTelemetry tracing to Application Insights.",
-          "next": "lg-observability-result"
-        }
-      ]
-    },
-    "lg-chat-result": {
-      "id": "lg-chat-result",
-      "type": "result",
-      "breadcrumb": "Chat",
-      "intro": "A minimal LangGraph chat agent with multi-turn conversation. lg-resp-chat uses the first-class langchain-azure-ai hosting integration; byo-resp-langgraph-chat hosts an equivalent graph with the generic BYO Responses server SDK.",
-      "sampleIds": [
-        "lg-resp-chat",
-        "byo-resp-langgraph-chat"
-      ]
-    },
-    "lg-tools": {
-      "id": "lg-tools",
-      "type": "question",
-      "breadcrumb": "Tools",
-      "title": "Foundry Toolbox or a raw MCP server?",
-      "help": "Both surface external tools to a LangGraph agent.",
-      "options": [
-        {
-          "label": "Foundry Toolbox (web_search + GitHub Copilot MCP)",
-          "description": "Managed toolbox with OAuth consent surfacing.",
-          "next": "lg-tools-toolbox-result",
-          "recommended": true
-        },
-        {
-          "label": "A remote MCP server directly",
-          "description": "Load tools from an MCP server via langchain_mcp_adapters.",
-          "next": "lg-tools-mcp-result"
-        }
-      ]
-    },
-    "lg-tools-toolbox-result": {
-      "id": "lg-tools-toolbox-result",
-      "type": "result",
-      "breadcrumb": "Toolbox",
-      "intro": "A LangGraph agent wired to a Foundry Toolbox. lg-resp-toolbox uses the first-class integration; the BYO-hosted variants add a graph over the generic server SDK, including one that accesses tools on behalf of the signed-in user.",
-      "sampleIds": [
-        "lg-resp-toolbox",
-        "byo-resp-langgraph-toolbox",
-        "byo-resp-langgraph-toolbox-user-identity"
-      ]
-    },
-    "lg-tools-mcp-result": {
-      "id": "lg-tools-mcp-result",
-      "type": "result",
-      "breadcrumb": "MCP",
-      "intro": "A LangGraph agent that loads tools from a remote MCP server (default: GitHub Copilot MCP).",
-      "sampleIds": [
-        "lg-resp-mcp"
-      ]
-    },
-    "lg-files-result": {
-      "id": "lg-files-result",
-      "type": "result",
-      "breadcrumb": "Files",
-      "intro": "A LangGraph agent with filesystem tools and a Toolbox code_interpreter for uploaded files.",
-      "sampleIds": [
+        "af-resp-files",
         "lg-resp-files"
       ]
     },
-    "lg-workflows-result": {
-      "id": "lg-workflows-result",
-      "type": "result",
-      "breadcrumb": "Workflows",
-      "intro": "A custom StateGraph chaining slogan-writer, legal-reviewer, and formatter nodes.",
+    {
+      "id": "human-async",
+      "title": "Human-in-the-Loop, Async & Events",
+      "tagline": "approvals · background · events",
+      "description": "Pause for human approval, run long-running/background work, keep per-user session state, and react to events.",
       "sampleIds": [
-        "lg-resp-workflows"
+        "lg-resp-hitl",
+        "byo-resp-notetaking",
+        "byo-resp-session-multiplexing",
+        "byo-resp-background",
+        "byo-inv-notetaking",
+        "byo-inv-hitl",
+        "byo-inv-event-grid"
       ]
     },
-    "lg-hitl-result": {
-      "id": "lg-hitl-result",
-      "type": "result",
-      "breadcrumb": "Human-in-the-loop",
-      "intro": "A StateGraph that drafts a proposal and pauses for approval via interrupt.",
+    {
+      "id": "orchestration",
+      "title": "Multi-Agent & Orchestration",
+      "tagline": "workflows · A2A delegation",
+      "description": "Coordinate multiple agents: pipelines, declarative routing, and agent-to-agent (A2A) delegation.",
       "sampleIds": [
-        "lg-resp-hitl"
-      ]
-    },
-    "lg-observability-result": {
-      "id": "lg-observability-result",
-      "type": "result",
-      "breadcrumb": "Observability",
-      "intro": "GenAI OpenTelemetry tracing with spans, metrics, and logs to Application Insights.",
-      "sampleIds": [
-        "lg-resp-observability"
-      ]
-    },
-    "lg-inv-result": {
-      "id": "lg-inv-result",
-      "type": "result",
-      "breadcrumb": "Invocations",
-      "intro": "A LangGraph agent over Invocations with client-managed session state. lg-inv-chat uses the first-class integration with a checkpointer; byo-inv-langgraph-chat hosts an equivalent graph with the generic BYO Invocations server SDK.",
-      "sampleIds": [
-        "lg-inv-chat",
-        "byo-inv-langgraph-chat"
-      ]
-    },
-    "lg-a2a-result": {
-      "id": "lg-a2a-result",
-      "type": "result",
-      "breadcrumb": "A2A",
-      "intro": "A concierge LangGraph agent delegates math questions over A2A to a math-expert agent.",
-      "sampleIds": [
+        "af-resp-workflows",
+        "af-resp-declarative",
+        "af-a2a-delegation",
+        "lg-resp-workflows",
         "lg-a2a-delegation"
       ]
     },
-    "byo-start": {
-      "id": "byo-start",
-      "type": "question",
-      "breadcrumb": "Bring Your Own",
-      "title": "How will your agent interact with the world?",
-      "help": "Level 2 — this maps to the protocol your BYO agent speaks.",
-      "options": [
-        {
-          "label": "Expose a standard, OpenAI-compatible API",
-          "description": "Responses protocol — any OpenAI-compatible client works; the platform manages sessions and streaming.",
-          "next": "byo-resp-capability",
-          "recommended": true
-        },
-        {
-          "label": "Expose a custom API you define and control",
-          "description": "Invocations protocol — arbitrary JSON in / SSE out; you define the schema and manage sessions yourself.",
-          "next": "byo-inv-capability"
-        }
-      ]
-    },
-    "byo-resp-capability": {
-      "id": "byo-resp-capability",
-      "type": "question",
-      "breadcrumb": "Chat (Responses)",
-      "title": "What are you building with?",
-      "help": "Level 3 — native model-SDK code, a third-party framework, or a specific scenario.",
-      "options": [
-        {
-          "label": "Start native — just a model SDK, no framework",
-          "description": "Write plain code that calls a Foundry model directly through the Azure AI Projects SDK — no agent framework required. The simplest possible starting point.",
-          "next": "byo-resp-hello-result",
-          "recommended": true
-        },
-        {
-          "label": "Use a third-party agent framework — the OpenAI Agents SDK",
-          "description": "Host an agent built with the OpenAI Agents SDK over Responses.",
-          "next": "byo-resp-openai-result"
-        },
-        {
-          "label": "Build a specific scenario or capability",
-          "description": "Tools, notetaking, background work, sessions, browser automation, or production concerns — all native under the hood.",
-          "next": "byo-resp-scenarios"
-        }
-      ]
-    },
-    "byo-resp-scenarios": {
-      "id": "byo-resp-scenarios",
-      "type": "question",
-      "breadcrumb": "Chat (Responses)",
-      "title": "Which scenario or capability?",
-      "help": "Level 4 — pick the use case nearest to yours.",
-      "options": [
-        {
-          "label": "Connect to tools via a Foundry Toolbox",
-          "description": "A Foundry Toolbox MCP endpoint for tool access.",
-          "next": "byo-resp-tools-result"
-        },
-        {
-          "label": "Take notes / maintain state with a custom tool",
-          "description": "A note-taking agent.",
-          "next": "byo-resp-notetaking-result"
-        },
-        {
-          "label": "Long-running background processing",
-          "description": "Async background execution.",
-          "next": "byo-resp-background-result"
-        },
-        {
-          "label": "Manage sessions across multiple callers",
-          "description": "Share one session id while history stays scoped per user.",
-          "next": "byo-resp-session-result"
-        },
-        {
-          "label": "Automate a browser",
-          "description": "Toolbox MCP + playwright-cli for multi-session browsing.",
-          "next": "byo-resp-browser-result"
-        },
-        {
-          "label": "Production concerns (secrets, optimization)",
-          "description": "Connection-templated secrets, or wiring for the Agent Optimizer.",
-          "next": "byo-resp-production"
-        }
-      ]
-    },
-    "byo-resp-hello-result": {
-      "id": "byo-resp-hello-result",
-      "type": "result",
-      "breadcrumb": "Hello world",
-      "intro": "The simplest possible BYO Responses agent — plain code that calls a Foundry model directly through the Azure AI Projects SDK, with no agent framework.",
+    {
+      "id": "observability",
+      "title": "Observability & Tracing",
+      "tagline": "tracing · metrics · App Insights",
+      "description": "See what the agent is doing: distributed tracing and metrics wired to Application Insights / OpenTelemetry.",
       "sampleIds": [
-        "byo-resp-hello-world"
+        "af-resp-observability",
+        "lg-resp-observability"
       ]
     },
-    "byo-resp-openai-result": {
-      "id": "byo-resp-openai-result",
-      "type": "result",
-      "breadcrumb": "OpenAI Agents SDK",
-      "intro": "Host an OpenAI Agents SDK agent over the Responses protocol.",
+    {
+      "id": "security",
+      "title": "Security, Governance & Ops",
+      "tagline": "identity · guardrails · secrets",
+      "description": "Run safely in production: managed identity to downstream Azure services, content-safety guardrails, secrets/connections, and infra diagnostics.",
       "sampleIds": [
-        "byo-resp-openai-agents-sdk"
+        "af-resp-downstream-azure",
+        "af-resp-content-safety",
+        "byo-resp-env-vars",
+        "byo-inv-diagnostic"
       ]
     },
-    "byo-resp-tools-result": {
-      "id": "byo-resp-tools-result",
-      "type": "result",
-      "breadcrumb": "Toolbox",
-      "intro": "Wire a BYO agent to a Foundry Toolbox for external tools.",
+    {
+      "id": "optimization",
+      "title": "Agent Optimization",
+      "tagline": "auto-tune instructions (preview)",
+      "description": "Automatically improve agent instructions and behavior with the Agent Optimizer (preview).",
       "sampleIds": [
-        "byo-resp-toolbox"
-      ]
-    },
-    "byo-resp-notetaking-result": {
-      "id": "byo-resp-notetaking-result",
-      "type": "result",
-      "breadcrumb": "Notetaking",
-      "intro": "An agent that takes and retrieves notes with a custom tool.",
-      "sampleIds": [
-        "byo-resp-notetaking"
-      ]
-    },
-    "byo-resp-background-result": {
-      "id": "byo-resp-background-result",
-      "type": "result",
-      "breadcrumb": "Background",
-      "intro": "Long-running background processing with async execution.",
-      "sampleIds": [
-        "byo-resp-background"
-      ]
-    },
-    "byo-resp-session-result": {
-      "id": "byo-resp-session-result",
-      "type": "result",
-      "breadcrumb": "Sessions",
-      "intro": "Multiple callers share one agent_session_id while history stays scoped per platform user.",
-      "sampleIds": [
-        "byo-resp-session-multiplexing"
-      ]
-    },
-    "byo-resp-browser-result": {
-      "id": "byo-resp-browser-result",
-      "type": "result",
-      "breadcrumb": "Browser automation",
-      "intro": "Browser automation with Toolbox MCP session lifecycle and playwright-cli.",
-      "sampleIds": [
-        "byo-resp-browser-automation"
-      ]
-    },
-    "byo-resp-production": {
-      "id": "byo-resp-production",
-      "type": "question",
-      "breadcrumb": "Production",
-      "title": "Which production concern?",
-      "help": "Secrets handling or agent optimization.",
-      "options": [
-        {
-          "label": "Resolve secrets from connections via env vars",
-          "description": "Connection-templated secret resolver with a kind-aware safety policy.",
-          "next": "byo-resp-envvars-result",
-          "recommended": true
-        },
-        {
-          "label": "Optimize the agent (Agent Optimizer)",
-          "description": "Minimal or customer-support agent wired for the optimizer.",
-          "next": "byo-resp-optimization-result"
-        }
-      ]
-    },
-    "byo-resp-envvars-result": {
-      "id": "byo-resp-envvars-result",
-      "type": "result",
-      "breadcrumb": "Env vars",
-      "intro": "Read env vars injected by Foundry's connection-templated secret resolver.",
-      "sampleIds": [
-        "byo-resp-env-vars"
-      ]
-    },
-    "byo-resp-optimization-result": {
-      "id": "byo-resp-optimization-result",
-      "type": "result",
-      "breadcrumb": "Optimizer",
-      "intro": "BYO agents wired for the Foundry Agent Optimizer — start with hello-world, then the customer-support scenario.",
-      "sampleIds": [
+        "af-resp-optimization-travel",
         "byo-resp-optimization-hello-world",
         "byo-resp-optimization-customer-support"
       ]
     },
-    "byo-inv-capability": {
-      "id": "byo-inv-capability",
-      "type": "question",
-      "breadcrumb": "Invocations",
-      "title": "What are you building with?",
-      "help": "Level 3 — native model-SDK code, a third-party framework, or a specific scenario.",
-      "options": [
-        {
-          "label": "Start native — just a model SDK, no framework",
-          "description": "Write plain code that calls a Foundry model directly through the Azure AI Projects SDK — no agent framework required. JSON in, streaming SSE out.",
-          "next": "byo-inv-hello-result",
-          "recommended": true
-        },
-        {
-          "label": "Use a third-party agent framework or SDK",
-          "description": "Bring the Claude Agent SDK, Pydantic AI (AG-UI), or the GitHub Copilot SDK, hosted over Invocations.",
-          "next": "byo-inv-frameworks"
-        },
-        {
-          "label": "Build a specific scenario or capability",
-          "description": "Tools, notetaking, human-in-the-loop, event triggers, or network diagnostics.",
-          "next": "byo-inv-scenarios"
-        }
-      ]
-    },
-    "byo-inv-frameworks": {
-      "id": "byo-inv-frameworks",
-      "type": "question",
-      "breadcrumb": "Invocations",
-      "title": "Which framework or SDK?",
-      "help": "Level 4 — pick the framework you already build with.",
-      "options": [
-        {
-          "label": "Use the Claude Agent SDK",
-          "description": "Host an agent built with the Claude Agent SDK over Invocations.",
-          "next": "byo-inv-claude-result"
-        },
-        {
-          "label": "Use Pydantic AI (AG-UI streaming protocol)",
-          "description": "A Pydantic AI agent exposed through the AG-UI streaming protocol over Invocations.",
-          "next": "byo-inv-agui-result"
-        },
-        {
-          "label": "Use the GitHub Copilot SDK",
-          "description": "Build on the GitHub Copilot SDK, using GitHub Copilot as the AI backbone.",
-          "next": "byo-inv-copilot-result"
-        }
-      ]
-    },
-    "byo-inv-scenarios": {
-      "id": "byo-inv-scenarios",
-      "type": "question",
-      "breadcrumb": "Invocations",
-      "title": "Which scenario or capability?",
-      "help": "Level 4 — pick the use case nearest to yours.",
-      "options": [
-        {
-          "label": "Connect to tools via a Foundry Toolbox",
-          "description": "Toolbox MCP endpoint over Invocations.",
-          "next": "byo-inv-toolbox-result"
-        },
-        {
-          "label": "Take notes / maintain state",
-          "description": "A note-taking agent over Invocations.",
-          "next": "byo-inv-notetaking-result"
-        },
-        {
-          "label": "Pause for human approval (human-in-the-loop)",
-          "description": "Long-running agent that waits for approval.",
-          "next": "byo-inv-hitl-result"
-        },
-        {
-          "label": "Trigger from an event (Azure Event Grid)",
-          "description": "Storage → Event Grid → agent, summarizing new blobs.",
-          "next": "byo-inv-eventgrid-result"
-        },
-        {
-          "label": "Diagnose networking / infra (no LLM)",
-          "description": "DNS/TCP/TLS/HTTP probes for BYO network debugging.",
-          "next": "byo-inv-diagnostic-result"
-        }
-      ]
-    },
-    "byo-inv-hello-result": {
-      "id": "byo-inv-hello-result",
-      "type": "result",
-      "breadcrumb": "Hello world",
-      "intro": "The simplest BYO Invocations agent — plain code that calls a Foundry model directly through the Azure AI Projects SDK (no framework); arbitrary JSON in, streaming SSE out.",
+    {
+      "id": "browser",
+      "title": "Browser & Computer Use",
+      "tagline": "Playwright · scraping",
+      "description": "Drive a real browser for scraping and computer-use tasks via Playwright.",
       "sampleIds": [
-        "byo-inv-hello-world"
+        "af-resp-browser-automation",
+        "byo-resp-browser-automation"
       ]
     },
-    "byo-inv-claude-result": {
-      "id": "byo-inv-claude-result",
-      "type": "result",
-      "breadcrumb": "Claude Agent SDK",
-      "intro": "A getting-started Claude Agent SDK agent with streaming over Invocations.",
+    {
+      "id": "teams",
+      "title": "Teams / M365 Channel",
+      "tagline": "ship to Microsoft Teams",
+      "description": "Ship the agent as a Microsoft Teams / M365 channel using the Activity protocol.",
       "sampleIds": [
-        "byo-inv-claude-agent-sdk"
+        "af-resp-teams-activity"
       ]
     },
-    "byo-inv-toolbox-result": {
-      "id": "byo-inv-toolbox-result",
-      "type": "result",
-      "breadcrumb": "Toolbox",
-      "intro": "A BYO Invocations agent wired to a Foundry Toolbox MCP endpoint.",
+    {
+      "id": "adapters",
+      "title": "Other SDKs & Adapters",
+      "tagline": "bring another SDK to Foundry",
+      "description": "Bring a different SDK to Foundry: LangGraph graphs, the OpenAI Agents SDK, the Claude Agent SDK, Pydantic AI (AG-UI), or the GitHub Copilot SDK.",
       "sampleIds": [
-        "byo-inv-toolbox"
-      ]
-    },
-    "byo-inv-notetaking-result": {
-      "id": "byo-inv-notetaking-result",
-      "type": "result",
-      "breadcrumb": "Notetaking",
-      "intro": "A note-taking agent using the Invocations protocol.",
-      "sampleIds": [
-        "byo-inv-notetaking"
-      ]
-    },
-    "byo-inv-agui-result": {
-      "id": "byo-inv-agui-result",
-      "type": "result",
-      "breadcrumb": "AG-UI",
-      "intro": "A Pydantic AI agent exposed through the AG-UI streaming protocol via the Invocations endpoint.",
-      "sampleIds": [
-        "byo-inv-ag-ui"
-      ]
-    },
-    "byo-inv-copilot-result": {
-      "id": "byo-inv-copilot-result",
-      "type": "result",
-      "breadcrumb": "GitHub Copilot",
-      "intro": "An agent built on the GitHub Copilot SDK, using GitHub Copilot as the AI backbone.",
-      "sampleIds": [
+        "byo-resp-langgraph-chat",
+        "byo-resp-openai-agents-sdk",
+        "byo-inv-langgraph-chat",
+        "byo-inv-claude-agent-sdk",
+        "byo-inv-ag-ui",
         "byo-inv-github-copilot"
       ]
-    },
-    "byo-inv-hitl-result": {
-      "id": "byo-inv-hitl-result",
-      "type": "result",
-      "breadcrumb": "Human-in-the-loop",
-      "intro": "A long-running agent that pauses for human approval before continuing.",
-      "sampleIds": [
-        "byo-inv-hitl"
-      ]
-    },
-    "byo-inv-eventgrid-result": {
-      "id": "byo-inv-eventgrid-result",
-      "type": "result",
-      "breadcrumb": "Event Grid",
-      "intro": "Event-driven: Storage → Event Grid → agent; summarizes a new blob back to Storage.",
-      "sampleIds": [
-        "byo-inv-event-grid"
-      ]
-    },
-    "byo-inv-diagnostic-result": {
-      "id": "byo-inv-diagnostic-result",
-      "type": "result",
-      "breadcrumb": "Diagnostic",
-      "intro": "A no-LLM agent that probes DNS/TCP/TLS/HTTP and reports what the runtime can reach.",
-      "sampleIds": [
-        "byo-inv-diagnostic"
-      ]
     }
-  }
+  ]
 }
